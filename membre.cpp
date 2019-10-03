@@ -16,7 +16,6 @@ Membre::Membre(const string& nom, TypeMembre typeMembre) :
 	nom_(nom), typeMembre_ (typeMembre)
 {
 }
-
 //a changer
 Membre::Membre(const Membre& membre) :
 	nom_(membre.nom_), typeMembre_(membre.getTypeMembre())
@@ -28,8 +27,9 @@ Membre::Membre(const Membre& membre) :
 			billets_.push_back(new FlightPass(membre.billets_[i]->getPnr(), membre.billets_[i]->getNomPassager(), membre.billets_[i]->getPrix(),
 			membre.billets_[i]->getOd(), membre.billets_[i]->getTarif(), membre.billets_[i]->getTypeBillet())); break;
 		case Billet_Base: billets_.push_back(new Billet(*membre.billets_[i])); break;
-		case Billet_Regulier: billets_.push_back(new BilletRegulier(membre.billets_[i]->getPnr(), membre.billets_[i]->getNomPassager(), membre.billets_[i]->getPrix(),
-			membre.billets_[i]->getOd(), membre.billets_[i]->getTarif(),"28738", membre.getBillets()[i]->getTypeBillet())); break;
+		case Billet_Regulier: BilletRegulier *billerRegulier = static_cast<BilletRegulier*>(membre.billets_[i]);
+			billets_.push_back(new BilletRegulier(billerRegulier->getPnr(), billerRegulier->getNomPassager(), billerRegulier->getPrix(),
+				billerRegulier->getOd(), billerRegulier->getTarif(),billerRegulier->getDateVol(), billerRegulier->getTypeBillet())); break;
 		}
 
 	}
@@ -72,17 +72,20 @@ void Membre::utiliserBillet(const string & pnr)
 				if (billetFlightPass->getNbUtilisationsRestante() == 1) {
 					billets_[i] = billets_[billets_.size() - 1];
 					billets_.pop_back();
+					delete billetFlightPass;
 				}
 				else
 					billetFlightPass->decrementeNbUtilisations();
 			}
 			else {
-				billets_[i] = billets_[billets_.size() - 1];
+				*billets_[i] =  *billets_[billets_.size() - 1];
+				delete billets_[billets_.size() - 1];
 				billets_.pop_back();
 			}
 		}
 		else
 			cout << "Erreur" << endl;
+	
 }
 
 // a changer
@@ -129,7 +132,7 @@ Membre& Membre::operator=(const Membre& membre)
 
 		billets_.clear();
 
-		for (int i = 0; i < membre.billets_.size(); i++) {
+		for ( int i = 0; i < membre.billets_.size(); i++) {
 			billets_.push_back(new Billet(*membre.billets_[i]));
 		}
 	}
@@ -143,7 +146,7 @@ ostream& operator<<(ostream& o, const Membre& membre)
 	o << setfill(' ');
 	o << "- Membre " << membre.nom_ << ":" << endl;
 	o << "\t" << "- Billets :" << endl;
-	for (int i = 0; i < membre.billets_.size(); i++) {
+	for (unsigned int i = 0; i < membre.billets_.size(); i++) {
 		o << *membre.billets_[i];
 	}
 	

@@ -1,6 +1,11 @@
 #include "membrePremium.h"
 
-MembrePremium::MembrePremium(const string & nom): MembreRegulier(nom,Membre_Premium) , joursRestants_(JOUR_RESTANT_INITIALE) , pointsCumules_(0)
+
+
+
+
+MembrePremium::MembrePremium(const string & nom): MembreRegulier(nom,Membre_Premium) , joursRestants_(JOUR_RESTANT_INITIALE) , pointsCumules_(0
+)
 {
 }
 
@@ -31,20 +36,26 @@ void MembrePremium::ajouterBillet(const string & pnr, double prix, const string 
 		if (billets_[i]->getPnr() == pnr)
 			modifierPointsCumules(calculerPoints(billets_[i]));
 }
-
+	
 void MembrePremium::acheterCoupon(Coupon * coupon)
 {
-	if (pointsCumules_ >=1000 )
-		if(coupon->getRabais() <=20)
-		coupon->setRabais(coupon->getRabais() + 0.01);
-	MembreRegulier::acheterCoupon(coupon);
+	double rabais = 0, nouvelCout = 0;;
+	if (pointsCumules_ <= 20000){
+		//rabais = (int)(pointsCumules_ / 1000)*0.01*coupon->getCout();
+		rabais = 0.01*pointsCumules_ / 1000;
+		nouvelCout = coupon->getCout() - coupon->getCout()*rabais;
+			if (points_ >= nouvelCout) {
+				coupon->setCout(nouvelCout);
+				MembreRegulier::acheterCoupon(coupon);
+			}
+	}
 }
 
 ostream & operator<<(ostream & os, const MembrePremium & membrePremium)
 {
 	MembreRegulier m(membrePremium);
 	os << m << endl;
-	os << membrePremium.getpointsCumulee() << endl;
-	os << membrePremium.getJourRestants() << endl;
+	os << "\t" << "- Points Cumulee :" << membrePremium.getpointsCumulee() << endl;
+	os << "\t" << "- Jours Premium Restants :" << membrePremium.getJourRestants() << endl;
 	return os;
 }

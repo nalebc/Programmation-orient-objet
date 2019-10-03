@@ -65,14 +65,13 @@ void Gestionnaire::assignerBillet(const string& nomMembre, const string& pnr, do
 	if (trouverMembre(nomMembre) == nullptr)return;
 	Membre* membre = trouverMembre(nomMembre);
 	MembrePremium* membrePremium = static_cast<MembrePremium*>(trouverMembre(nomMembre));
-	double prixReel, rabais , prixtempo = prixBase;
+	double prixReel, rabais ;
 	if (typeBillet == Flight_Pass)
 		prixBase *= 10;
 	if (membre->getTypeMembre() == Membre_Premium) {
 		if (membrePremium->getpointsCumulee() <= 20000) {
 			rabais = (int)(membrePremium->getpointsCumulee() / 1000)*0.005;
 			prixBase -= (rabais*prixBase);
-			membrePremium->modifierPointsCumules((rabais/0.005)*1000);
 		}
 	}
 		if (utiliserCoupon) 
@@ -80,7 +79,7 @@ void Gestionnaire::assignerBillet(const string& nomMembre, const string& pnr, do
 		else 
 			prixReel = prixBase;
 		
-		membre->ajouterBillet(pnr, prixReel, od, tarif, typeBillet, dateVol);
+		membrePremium->ajouterBillet(pnr, prixReel, od, tarif, typeBillet, dateVol);
 	
 }
 
@@ -92,8 +91,7 @@ double Gestionnaire::appliquerCoupon(Membre* membre, double prix)
 		cout << "Le membre n'a pas de coupon utilisable\n";
 		return 0;
 	}
-	Coupon* meilleurCoupon;
-		meilleurCoupon = membrePremium->getCoupons()[0];
+	 Coupon* meilleurCoupon = membrePremium->getCoupons()[0];
 		for (int i = 1; i < membrePremium->getCoupons().size(); ++i) {
 			if (*membrePremium->getCoupons()[i] > *meilleurCoupon) {
 				meilleurCoupon = membrePremium->getCoupons()[i];
@@ -111,7 +109,7 @@ void Gestionnaire::acheterCoupon(const string& nomMembre)
 		cout << "Le gestionnaire n'a pas de coupon!" << endl;
 		return;
 	}
-		MembrePremium* membreCaste = static_cast<MembrePremium*>(trouverMembre(nomMembre));
+		MembreRegulier* membreCaste = static_cast<MembreRegulier*>(trouverMembre(nomMembre));
 		if (membreCaste == nullptr) {
 			return;
 		}

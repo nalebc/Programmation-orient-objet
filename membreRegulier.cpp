@@ -3,10 +3,7 @@
 
 
 
-MembreRegulier::MembreRegulier(const string & nom, TypeMembre typeMembre) : Membre(nom, typeMembre) , points_(0)
-{
-	
-}
+MembreRegulier::MembreRegulier(const string & nom, TypeMembre typeMembre) : Membre(nom, typeMembre), points_(0){}
 
 int MembreRegulier::getPoints() const
 {
@@ -36,7 +33,7 @@ Membre& MembreRegulier::operator+=(Coupon* coupon)
 
 Membre& MembreRegulier::operator-=(Coupon* coupon)
 {
-	for (int i = 0; i < coupons_.size(); i++) {
+	for (unsigned int i = 0; i < coupons_.size(); i++) {
 		if (coupons_[i] == coupon) {
 			coupons_[i] = coupons_[coupons_.size() - 1];
 			coupons_.pop_back();
@@ -55,7 +52,7 @@ void MembreRegulier::modifierPoints(int points)
 void MembreRegulier::ajouterBillet(const string & pnr, double prix, const string & od, TarifBillet tarif, TypeBillet typeBillet, const string & dateVol)
 {
 	Membre::ajouterBillet(pnr, prix, od, tarif, typeBillet, dateVol);
-	for (int i = 0; i < billets_.size(); i++)
+	for (unsigned int i = 0; i < billets_.size(); i++)
 		if (billets_[i]->getPnr() == pnr)
 			modifierPoints(calculerPoints(billets_[i]));
 
@@ -86,9 +83,9 @@ ostream & operator<<(ostream & os, const MembreRegulier & membreRegulier)
 
 	Membre m(membreRegulier);
 	os << m; 
-	os << "Points : " << membreRegulier.getPoints() << endl;
-	os << "Coupons: " << endl;
-	for (int i = 0; i < membreRegulier.getCoupons().size(); i++)
+	os << "\t" <<"- Points : " << membreRegulier.getPoints() << endl;
+	os << "\t" <<"- Coupons : " << endl;
+	for (unsigned int i = 0; i < membreRegulier.getCoupons().size(); i++)
 		os << membreRegulier.getCoupons()[i];
 	return os;
 }

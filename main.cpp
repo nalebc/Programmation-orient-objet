@@ -89,7 +89,7 @@ int main() {
 
 	tests.push_back(mr1->calculerPoints(b1) == 150
 		&& mr1->calculerPoints(b2) == 450);
-
+	
 	// Tests 13 - 14 - 15: Ajouter billets Membre Regulier
 	mr1->ajouterBillet("A1B2C3", 3000, "YUL - YYZ", TarifBillet::Premiere, Billet_Regulier ,"2019-12-21");
 	tests.push_back(mr1->getBillets().size() == 1
@@ -116,6 +116,7 @@ int main() {
 	mp1->ajouterBillet("H7I8Jcv9", 1500, "YUL - LGA", TarifBillet::PremiumEconomie, Billet_Regulier, "2019-12-21");
 	tests.push_back(mp1->getBillets().size() == 3
 		&& mp1->getPoints() == 1050 && mp1->getpointsCumulee() == 1050);
+	
 
 	//Test 19-20 utilisee billets flight Pass
 	for (int i = 0; i < 8; i++) {
@@ -124,6 +125,7 @@ int main() {
 	mp1->utiliserBillet("vbrbb");
 	
 	tests.push_back(mp1->getBillets().size() == 3);
+	
 
 	mp1->utiliserBillet("vbrbb");
 	tests.push_back(mp1->getBillets().size() == 2);
@@ -131,8 +133,9 @@ int main() {
 	//Test 21 utilisee billets regulier
 	mp1->utiliserBillet("csd22");
 	tests.push_back(mp1->getBillets().size() == 1);
-
-
+	
+	
+	
 
 	// Tests 22 - 23 - 24: Operateur +=
 	tests.push_back(&(*mr1 += c1) == mr1);
@@ -174,11 +177,12 @@ int main() {
 		&& mr1->getCoupons().size() == 4
 		&& mr1->getCoupons()[3] == c1);
 
+
 	//test 30-31 acheter coupons Membre Premium
 	mp1->acheterCoupon(c3);
 	tests.push_back(mp1->getCoupons().size() == 0);
 
-
+	mp1->modifierPointsCumules(632);
 	mp1->modifierPoints(632);
 	mp1->acheterCoupon(c3);
 	tests.push_back(mp1->getCoupons().size() == 1 && mp1->getPoints() == 11);
@@ -189,7 +193,6 @@ int main() {
 		&& !(*mr1 == "John")
 		&& !(*m2 == "Marc"));
 
-	bool test = !(*m2 == "Marc");
 
 	tests.push_back("Marc" == *mr1
 		&& "John" == *m2

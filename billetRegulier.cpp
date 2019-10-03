@@ -20,7 +20,8 @@ void BilletRegulier::setDateVol(string dateVol)
 
 ostream & operator<<(ostream & o, const BilletRegulier & billet)
 {
-	cout << billet;
+	Billet b(billet);
+	o << b;
 	o << billet.getDateVol();
 	return o;
 }

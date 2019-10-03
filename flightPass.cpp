@@ -19,7 +19,8 @@ int FlightPass::getNbUtilisationsRestante() const
 
 ostream & operator<<(ostream & os, const FlightPass & flightpass)
 {
-	cout << flightpass;
-	os << flightpass.getNbUtilisationsRestante();
+	Billet b(flightpass);
+	os << b;
+	os << "\t\t\t" << setw(11) << "- Utilisations restantes  " << ": " << flightpass.getNbUtilisationsRestante() << endl;
 	return os;
 }

@@ -22,6 +22,6 @@ ostream & operator<<(ostream & o, const BilletRegulier & billet)
 {
 	Billet b(billet);
 	o << b;
-	o << billet.getDateVol();
+	o << "\t\t\t" << setw(11) <<"- Date  " << ": " << billet.getDateVol() << endl;
 	return o;
 }

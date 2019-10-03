@@ -46,7 +46,7 @@ public:
 	void utiliserBillet(const string& pnr);
 
 	//à modifer
-	virtual void ajouterBillet(const string& pnr, double prix, const string& od, TarifBillet tarif, TypeBillet typeBillet , const string& dateVol);
+	 void ajouterBillet(const string& pnr, double prix, const string& od, TarifBillet tarif, TypeBillet typeBillet , const string& dateVol);
 
 	bool operator==(const string& nomMembre) const;
 	friend bool operator==(const string& nomMembre, const Membre& membre);

@@ -30,7 +30,7 @@ public:
 	unsigned int getpointsCumulee() const;
 
 	//à faire
-	void ajouterBillet(const string& pnr, double prix, const string& od, TarifBillet tarif, TypeBillet typeBillet, const string& dateVol) override;
+	void ajouterBillet(const string& pnr, double prix, const string& od, TarifBillet tarif, TypeBillet typeBillet, const string& dateVol) ;
 	//à faire
 	void acheterCoupon(Coupon* coupon);
 

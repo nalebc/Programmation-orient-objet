@@ -84,8 +84,9 @@ ostream & operator<<(ostream & os, const MembreRegulier & membreRegulier)
 	Membre m(membreRegulier);
 	os << m; 
 	os << "\t" <<"- Points : " << membreRegulier.getPoints() << endl;
-	os << "\t" <<"- Coupons : " << endl;
+	os << "\t" <<"- Coupons : " << endl ;
 	for (unsigned int i = 0; i < membreRegulier.getCoupons().size(); i++)
 		os << membreRegulier.getCoupons()[i];
+	cout << endl;
 	return os;
 }

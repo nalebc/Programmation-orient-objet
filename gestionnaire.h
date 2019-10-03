@@ -22,7 +22,7 @@ public:
 	vector<Coupon*> getCoupons() const;
 
 	//à modifier
-	virtual	void ajouterMembre(const string& nomMembre, TypeMembre typeMembre);
+	void ajouterMembre(const string& nomMembre, TypeMembre typeMembre);
 
 	void ajouterCoupon(const string& code, double rabais, int cout);
 

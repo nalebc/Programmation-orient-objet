@@ -48,7 +48,7 @@ public:
 	string formatTarif(TarifBillet tarif) const;
 
 	//à modifer
-	friend ostream& operator<<(ostream& o, const Billet& billet);
+	friend ostream& operator<<(ostream& o, const Billet& billet) ;
 private:
 	string pnr_;
 	string nomPassager_;

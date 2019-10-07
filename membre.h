@@ -54,7 +54,7 @@ public:
 	Membre& operator=(const Membre& membre);
 
 	//à modifer
-	friend ostream& operator<<(ostream& o, const Membre& membre);
+	friend ostream& operator<<(ostream& o, const Membre& membre) ;
 protected:
 	string nom_;
 	TypeMembre typeMembre_;

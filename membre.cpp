@@ -6,17 +6,42 @@
 #include "membre.h"
 
 //a changer
+
+
+
+/****************************************************************************
+ * Methode: Membre
+ * Description: Constructeur par défaut
+ * Paramètres: aucun
+ * Type de retour: aucun
+ ****************************************************************************/
 Membre::Membre() :
 	nom_(""), typeMembre_(Membre_Regulier)
 {
 }
 
 //a changer
+
+
+ /****************************************************************************
+  * Methode: Membre
+  * Description: Constructeur par paramètres
+  * Paramètres: nom (string) , typeMembre(TypeMembre)
+  * Type de retour: aucun
+  ****************************************************************************/
 Membre::Membre(const string& nom, TypeMembre typeMembre) :
 	nom_(nom), typeMembre_ (typeMembre)
 {
 }
 //a changer
+
+
+/****************************************************************************
+ * Methode: Membre
+ * Description: Constructeur par copie
+ * Paramètres: membre (Membre)
+ * Type de retour: aucun
+ ****************************************************************************/
 Membre::Membre(const Membre& membre) :
 	nom_(membre.nom_), typeMembre_(membre.getTypeMembre())
 {
@@ -35,6 +60,16 @@ Membre::Membre(const Membre& membre) :
 	}
 }
 
+
+
+
+
+/****************************************************************************
+ * Methode: ~Membre
+ * Description: Desctructeur
+ * Paramètres: aucun
+ * Type de retour: aucun
+ ****************************************************************************/
 Membre::~Membre()
 {
 	for (int i = 0; i < billets_.size(); i++) {
@@ -42,27 +77,68 @@ Membre::~Membre()
 	}
 }
 
+
+// Getter
+/****************************************************************************
+ * Methode: getNom
+ * Description: récupère nom_
+ * Paramètres: aucun
+ * Type de retour: string
+ ****************************************************************************/
 string Membre::getNom() const
 {
 	return nom_;
 }
 
+
+/****************************************************************************
+ * Methode: getTypeMembre
+ * Description: récupère typeMembre_
+ * Paramètres: aucun
+ * Type de retour: TypeMembre
+ ****************************************************************************/
 TypeMembre Membre::getTypeMembre() const
 {
 	return typeMembre_;
 }
 
+
+
+
+/****************************************************************************
+ * Methode: getBillets
+ * Description: récupère billets_
+ * Paramètres: aucun
+ * Type de retour: vector<Billet*>
+ ****************************************************************************/
 vector<Billet*> Membre::getBillets() const
 {
 	return billets_;
 }
 
 
+
+
+// Setter
+/****************************************************************************
+ * Methode: setNom
+ * Description: modifier le nom_
+ * Paramètres: nom ( const string&)
+ * Type de retour: aucun
+ ****************************************************************************/
 void Membre::setNom(const string& nom)
 {
 	nom_ = nom;
 }
 
+
+
+/*******************************************************************************************
+ * Methode: utiliserBillet
+ * Description: permet d'enlever un billet à un membre s'il a utilisé
+ * Paramètres:  pnr(string)
+ * Type de retour: aucun
+ ********************************************************************************************/
 void Membre::utiliserBillet(const string & pnr)
 {
 	for (unsigned int i = 0; i < billets_.size(); i++)
@@ -89,6 +165,17 @@ void Membre::utiliserBillet(const string & pnr)
 }
 
 // a changer
+
+
+/*******************************************************************************************
+ * Methode: ajouterBillet
+ * Description: Construit un billet dépendamment de son type, et l'ajoute à un membre
+ * Paramètres: - const string& : pnr , od , dateVol .
+ *			   - double : prix
+ *			   - TarifBillet : tarif
+ *			   - TypeBillet : typeBillet
+ * Type de retour: aucun
+ ********************************************************************************************/
 void Membre::ajouterBillet(const string& pnr, double prix, const string& od, TarifBillet tarif, TypeBillet typeBillet, const string& dateVol)
 {
 	if (typeBillet == Flight_Pass) {
@@ -109,16 +196,43 @@ void Membre::ajouterBillet(const string& pnr, double prix, const string& od, Tar
 
 
 
+
+/*******************************************************************************************
+ * Methode: operator==
+ * Description: permet de comparer un membre avec un nom
+ * Paramètres: const string& : nom
+ * Type de retour: bool
+ ********************************************************************************************/
 bool Membre::operator==(const string& nomMembre) const
 {
 	return nom_ == nomMembre;
 }
 
+
+
+
+
+/*******************************************************************************************
+ * Methode: operator==
+ * Description: permet de comparer un nom avec un membre
+ * Paramètres: const string& : nom , Membre& : membre
+ * Type de retour: bool
+ ********************************************************************************************/
 bool operator==(const string& nomMembre, const Membre& membre)
 {
 	return nomMembre == membre.nom_;
 }
 
+
+
+
+/*******************************************************************************************
+ * Methode: operator=
+ * Description: permet d'affecter un memre existant à un autre ( existant aussi), tout en écrasant
+ *				le contenu de ses attributs et les ceux du membre passé en paramètre
+ * Paramètres: const Membre& membre : membre
+ * Type de retour: Membre
+ ********************************************************************************************/
 Membre& Membre::operator=(const Membre& membre)
 {
 	if (this != &membre) {
@@ -140,8 +254,15 @@ Membre& Membre::operator=(const Membre& membre)
 	return *this;
 }
 
-// a changer
-ostream& operator<<(ostream& o, const Membre& membre)
+
+/*******************************************************************************************
+ * Methode: operator<<
+ * Description: permet d'afficher les informations d'un membre
+ * Paramètres: ostream& : os
+ *			   const Membre& : membre
+ * Type de retour: ostream
+ ********************************************************************************************/
+ostream& operator<<(ostream& o, const Membre& membre) 
 {
 	o << setfill(' ');
 	o << "- Membre " << membre.nom_ << ":" << endl;

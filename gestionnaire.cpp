@@ -5,10 +5,31 @@
 
 #include "gestionnaire.h"
 
+
+
+
+
+ /****************************************************************************
+  * Methode: Gestionnaire
+  * Description: Constructeur par défaut
+  * Paramètres: aucun
+  * Type de retour: aucun
+  ****************************************************************************/
 Gestionnaire::Gestionnaire()
 {
 }
 
+
+
+
+
+
+/****************************************************************************
+ * Methode: Gestionnaire
+ * Description: Distructeur
+ * Paramètres: aucun
+ * Type de retour: aucun
+ ****************************************************************************/
 Gestionnaire::~Gestionnaire()
 {
 	for (int i = 0; i < membres_.size(); i++) {
@@ -20,16 +41,41 @@ Gestionnaire::~Gestionnaire()
 	}
 }
 
+
+
+/****************************************************************************
+ * Methode: getMembres
+ * Description: récupère membres_
+ * Paramètres: aucun
+ * Type de retour: vector<Membre*>
+ ****************************************************************************/
 vector<Membre*> Gestionnaire::getMembres() const
 {
 	return membres_;
 }
 
+
+/****************************************************************************
+ * Methode: getCoupons
+ * Description: récupère coupons_
+ * Paramètres: aucun
+ * Type de retour: vector<Coupon*>
+ ****************************************************************************/
 vector<Coupon*> Gestionnaire::getCoupons() const
 {
 	return coupons_;
 }
 
+
+
+
+
+/*******************************************************************************************
+ * Methode: ajouterMembre
+ * Description: crée un membre à partir du constructeur, et l'ajoute
+ * Paramètres: - const string& : nomMembre
+ * Type de retour: aucun
+ ********************************************************************************************/
 void Gestionnaire::ajouterMembre(const string& nomMembre, TypeMembre typeMembre)
 {
 	switch (typeMembre) {
@@ -42,11 +88,31 @@ void Gestionnaire::ajouterMembre(const string& nomMembre, TypeMembre typeMembre)
 	}
 }
 
+
+
+
+
+
+/*******************************************************************************************
+ * Methode: ajouterCoupon
+ * Description: crée un coupon à partir du constructeur, et l'ajoute 
+ * Paramètres: - const string& : code ,   double : rabais, int : cout
+ * Type de retour: aucun
+ ********************************************************************************************/
 void Gestionnaire::ajouterCoupon(const string& code, double rabais, int cout)
 {
 	coupons_.push_back(new Coupon(code, rabais, cout));
 }
 
+
+
+
+/*******************************************************************************************
+ * Methode: trouverMembre
+ * Description: trouve le membre tel que son nom_=nomMmembre
+ * Paramètres: - const string& : nom Membre
+ * Type de retour: Membre*
+ ********************************************************************************************/
 Membre* Gestionnaire::trouverMembre(const string& nomMembre) const
 {
 	for (int i = 0; i < membres_.size(); i++) {
@@ -59,6 +125,18 @@ Membre* Gestionnaire::trouverMembre(const string& nomMembre) const
 	return nullptr;
 }
 
+
+
+
+/*******************************************************************************************
+ * Methode: assignerBillet
+ * Description: assigne un billet a un membre en appliquant un coupon ou non
+ * Paramètres: - const string& : nomMembre , pnr , od , dateVol .
+ *			   - double : prixBase
+ *			   - TarifBillet : tarif
+ *			   - TypeBillet : typeBillet
+ * Type de retour: aucun
+ ********************************************************************************************/
 void Gestionnaire::assignerBillet(const string& nomMembre, const string& pnr, double prixBase, const string& od, TarifBillet tarif, const string& dateVol,
 	bool utiliserCoupon, TypeBillet typeBillet)
 {
@@ -84,6 +162,16 @@ void Gestionnaire::assignerBillet(const string& nomMembre, const string& pnr, do
 }
 
 
+
+
+
+/*******************************************************************************************
+ * Methode: appliquerCoupon
+ * Description: applique le meilleur coupon (celui  qui a le rabais maximum) a un prix
+ * Paramètres: - double : prix
+ *			   - Membre* : membre
+ * Type de retour: double
+ ********************************************************************************************/
 double Gestionnaire::appliquerCoupon(Membre* membre, double prix)
 {
 	 MembrePremium* membrePremium = static_cast<MembrePremium*>(membre);
@@ -103,6 +191,17 @@ double Gestionnaire::appliquerCoupon(Membre* membre, double prix)
 	return prix * meilleurCoupon->getRabais();
 }
 
+
+
+
+
+/**************************************************************************************************************************
+ * Methode: acheterCoupon
+ * Description: Trouve d'abord le coupons avec le plus gros rabais tout en verifiant que le membre a les points qu'il faut,
+ *				ensuite si le membre a les points en lui ajoute le coupons sinon en affiche message d'erreur
+ * Paramètres: - const string& : nomMmembre
+ * Type de retour: aucun
+ **************************************************************************************************************************/
 void Gestionnaire::acheterCoupon(const string& nomMembre)
 {
 	if (coupons_.size() == 0) {
@@ -146,6 +245,13 @@ void Gestionnaire::acheterCoupon(const string& nomMembre)
 	}
 
 
+
+/*******************************************************************************************
+ * Methode: operator<<
+ * Description: afficher tous les membre d'un gestionnaire avec leur infos
+ * Paramètres: ostream& os, const Gestionnaire& gest
+ * Type de retour: ostream
+ ********************************************************************************************/
 ostream& operator<<(ostream& o, const Gestionnaire& gestionnaire)
 {
 	o << "=================== ETAT ACTUEL DU PROGRAMME ==================\n\n";

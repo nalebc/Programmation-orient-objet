@@ -160,7 +160,7 @@ void Membre::utiliserBillet(const string & pnr)
 			}
 		}
 		else
-			cout << "Erreur" << endl;
+			cout << "Erreur!!!" << endl;
 	
 }
 

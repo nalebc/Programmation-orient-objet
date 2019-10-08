@@ -3,6 +3,23 @@
  * Auteur : Philippe CÔTÉ-MORNEAULT
  */
 
+
+/* Reponses aux questions : 
+*	Réponse 2 : on utilise static_cast pour convertir convertir une classe mère vers une classe fille (ou vice versa ),
+*				pour qu'on puisse accéder aux méthodes ou attributs des classes qui ne sont pas accessibles directement,par exemple
+*				on convertit un objet de type class mère vers un objet de type class fille pour utiliser les méthodes
+*				de la class fille sur la class mère 
+*	Réponse 1 : Sans le typeMembre dans la class membre, il y'aura aucune façon de savoir si un membre est un premium ou regulier, parce que
+*				dans la class gestionnaire on a déclaré un vector de type Membre*, et on a mis tous les membres dedant, donc pour les différencier
+*				fallait mettre le typeMembre dans la class membre. En plus on devait vérifier le type d'un membre avant de l'afficher par exemple, ou
+*				de lui acheter un coupon ...etc,et pour utiliser les méthodes de la class dérivé (le stati_cast) il fallait vérifier le type aussi
+*				sinon on aurait eu des erreurs au moment où on voudrait utiliser ces méthodes. Donc si le typeMembre n'était pas là, on pourra pas 
+*				faire la différence entre les membres, et on devrait ajouter deux autres vector dans gestionnaire pour mettre chaque type de membre 
+*				dans un vector et les traiter séparèment.
+*				
+*				
+*/
+
 #include <string>
 #include <iostream>
 #include <vector>

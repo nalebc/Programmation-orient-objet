@@ -21,9 +21,6 @@ Gestionnaire::Gestionnaire()
 
 
 
-
-
-
 /****************************************************************************
  * Methode: Gestionnaire
  * Description: Distructeur
@@ -141,19 +138,18 @@ void Gestionnaire::assignerBillet(const string& nomMembre, const string& pnr, do
 	bool utiliserCoupon, TypeBillet typeBillet)
 {
 	if (trouverMembre(nomMembre) == nullptr)return;
-	Membre* membre = trouverMembre(nomMembre);
 	MembrePremium* membrePremium = static_cast<MembrePremium*>(trouverMembre(nomMembre));
 	double prixReel, rabais ;
 	if (typeBillet == Flight_Pass)
 		prixBase *= 10;
-	if (membre->getTypeMembre() == Membre_Premium) {
+	if (membrePremium->getTypeMembre() == Membre_Premium) {
 		if (membrePremium->getpointsCumulee() <= 20000) {
-			rabais = (int)(membrePremium->getpointsCumulee() / 1000)*0.005;
+			rabais = 0.005*membrePremium->getpointsCumulee() / 1000;
 			prixBase -= (rabais*prixBase);
 		}
 	}
 		if (utiliserCoupon) 
-		 prixReel = prixBase - appliquerCoupon(membrePremium, prixBase); 
+			prixReel = prixBase - appliquerCoupon(membrePremium, prixBase); 
 		else 
 			prixReel = prixBase;
 		

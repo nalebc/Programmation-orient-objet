@@ -1,29 +1,16 @@
+/*
+* Titre : billetRegulier.cpp - Travail Pratique #4
+* Date : 5 Octobre 2019
+* Auteur : Philippe CÔTÉ-MORNEAULT
+*/
+
 #include "billetRegulier.h"
 
-
-
-
-/****************************************************************************
- * Methode: BilletRegulier
- * Description: Constructeur par paramètres
- * Paramètres:  string : pnr, string : nomPassager, double : prix,string : od, 
- *              TarifBillet : tarif,  string : dateVol,TypeBillet typeBillet
- * Type de retour: aucun
- ****************************************************************************/
-BilletRegulier::BilletRegulier(const string & pnr, const string & nomPassager, double prix, const string & od, TarifBillet tarif, const string & dateVol,
-	TypeBillet typeBillet) : Billet(pnr, nomPassager, prix, od, tarif, typeBillet), dateVol_(dateVol)
+BilletRegulier::BilletRegulier(const string& pnr, double prix, const string& od, TarifBillet tarif, const string& dateVol) : 
+	Billet(pnr, prix, od, tarif), dateVol_(dateVol)
 {
-
 }
 
-
-
-/****************************************************************************
- * Methode: getDateVol
- * Description: récupère dateVol_
- * Paramètres: aucun
- * Type de retour: string
- ****************************************************************************/
 string BilletRegulier::getDateVol() const
 {
 	return dateVol_;
@@ -31,30 +18,28 @@ string BilletRegulier::getDateVol() const
 
 
 
-
-/****************************************************************************
- * Methode: setDateVol
- * Description: récupère dateVol_
- * Paramètres: string : dateVol
- * Type de retour: aucun
- ****************************************************************************/
 void BilletRegulier::setDateVol(string dateVol)
 {
 	dateVol_ = dateVol;
 }
 
-
-/****************************************************************************
-* Surcharge de l'operateur <<
-* Description: Affiche un BilletRegulier
-* Paramètres:	- ostream : os
-*				- BilletRegulier : billet
-* Type de retour: ostream
-****************************************************************************/
-ostream & operator<<(ostream & o, const BilletRegulier & billet)
+// TODO
+BilletRegulier* BilletRegulier::clone()
 {
-	Billet b(billet);
-	o << b;
-	o << "\t\t\t" << setw(11) <<"- Date  " << ": " << billet.getDateVol() << endl;
+	return (new BilletRegulier(*this));
+}
+
+// TODO : Remplacer cette fonction par la methode afficher()
+/*ostream& operator<<(ostream& o, const BilletRegulier& billet)
+{
+	o << static_cast<Billet>(billet);
+	o << "\t\t\t" << setw(11) << "- Vol le" << ": " << billet.dateVol_ << endl;
+
 	return o;
+}*/
+
+// TODO
+void BilletRegulier::afficher(ostream& o) {
+	Billet::afficher(o);
+	o << "\t\t\t" << setw(11) << "- Vol le" << ": " << dateVol_ << endl;
 }

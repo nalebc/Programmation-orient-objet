@@ -1,46 +1,41 @@
 /*
-* Titre : membrePremium.h - Travail Pratique #3
-* Date : 20 Septembre 2019
-* Auteur : Jeffrey Lavallee
+* Titre : membrePremium.h - Travail Pratique #4
+* Date : 5 Octobre 2019
+* Auteur : Philippe CÔTÉ-MORNEAULT
 */
-
 
 #ifndef MEMBRE_PREMIUM_H
 #define MEMBRE_PREMIUM_H
 
-
 #include "membreRegulier.h"
+#include "debogageMemoire.hpp"
 
 class MembrePremium : public MembreRegulier {
 public:
-	//à faire
+	// Constructeur
 	MembrePremium(const string& nom);
 
-	//setters
-	//à faire
+	// Setters
 	void setJourRestants(unsigned int joursRestants);
-	//à faire
-	void modifierPointsCumules(unsigned int pointCumulee);
+	void modifierPointsCumulee(unsigned int pointCumulee);
 
-
-	//getters
-	//à faire
+	// Getters
 	unsigned int getJourRestants() const;
-	//à faire
 	unsigned int getpointsCumulee() const;
 
-	//à faire
-	void ajouterBillet(const string& pnr, double prix, const string& od, TarifBillet tarif, TypeBillet typeBillet, const string& dateVol) ;
-	//à faire
-	void acheterCoupon(Coupon* coupon);
+	void ajouterBillet(Billet* billet) override;
+	double calculerCoutCoupon(Coupon* coupon);
+	// TODO
+	bool peutAcheterCoupon(Coupon* coupon);
+	void acheterCoupon(Coupon* coupon) override;
 
-	//à faire
-	friend ostream& operator<<(ostream& os, const MembrePremium& membrePremium);
+	// TODO: Retirer cette fonction par afficher()
+	//friend ostream& operator<<(ostream& os, const MembrePremium& membrePremium);
 
+	// TODO
+	void afficher(ostream& o);
 private:
 	unsigned int joursRestants_;
-	unsigned int pointsCumules_;
-
+	unsigned int pointsCumulee_;
 };
-
-#endif
+#endif // !MEMBRE_PREMIUM_H

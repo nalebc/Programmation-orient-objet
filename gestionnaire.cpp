@@ -1,118 +1,49 @@
 /*
- * Date : 12 Septembre 2019
- * Auteur : Philippe CÔTÉ-MORNEAULT
- */
+* Titre : gestionnaire.cpp - Travail Pratique #4
+* Date : 5 Octobre 2019
+* Auteur : Philippe CÔTÉ-MORNEAULT
+*/
 
 #include "gestionnaire.h"
 
-
-
-
-
- /****************************************************************************
-  * Methode: Gestionnaire
-  * Description: Constructeur par défaut
-  * Paramètres: aucun
-  * Type de retour: aucun
-  ****************************************************************************/
 Gestionnaire::Gestionnaire()
 {
 }
 
-
-
-/****************************************************************************
- * Methode: Gestionnaire
- * Description: Distructeur
- * Paramètres: aucun
- * Type de retour: aucun
- ****************************************************************************/
 Gestionnaire::~Gestionnaire()
 {
-	for (int i = 0; i < membres_.size(); i++) {
+	for (size_t i = 0; i < membres_.size(); ++i) {
 		delete membres_[i];
 	}
 
-	for (int i = 0; i < coupons_.size(); i++) {
+	for (size_t i = 0; i < coupons_.size(); ++i) {
 		delete coupons_[i];
 	}
 }
 
-
-
-/****************************************************************************
- * Methode: getMembres
- * Description: récupère membres_
- * Paramètres: aucun
- * Type de retour: vector<Membre*>
- ****************************************************************************/
 vector<Membre*> Gestionnaire::getMembres() const
 {
 	return membres_;
 }
 
-
-/****************************************************************************
- * Methode: getCoupons
- * Description: récupère coupons_
- * Paramètres: aucun
- * Type de retour: vector<Coupon*>
- ****************************************************************************/
 vector<Coupon*> Gestionnaire::getCoupons() const
 {
 	return coupons_;
 }
 
-
-
-
-
-/*******************************************************************************************
- * Methode: ajouterMembre
- * Description: crée un membre à partir du constructeur, et l'ajoute
- * Paramètres: - const string& : nomMembre
- * Type de retour: aucun
- ********************************************************************************************/
-void Gestionnaire::ajouterMembre(const string& nomMembre, TypeMembre typeMembre)
+void Gestionnaire::ajouterMembre(Membre* membre)
 {
-	switch (typeMembre) {
-	case Membre_Premium: 
-		membres_.push_back(new MembrePremium(nomMembre)); break;
-	case Membre_Regulier:
-		membres_.push_back(new MembreRegulier(nomMembre,typeMembre)); break;
-	case Membre_Occasionnel:
-		membres_.push_back(new Membre(nomMembre,typeMembre)); break;
-	}
+	membres_.push_back(membre);
 }
 
-
-
-
-
-
-/*******************************************************************************************
- * Methode: ajouterCoupon
- * Description: crée un coupon à partir du constructeur, et l'ajoute 
- * Paramètres: - const string& : code ,   double : rabais, int : cout
- * Type de retour: aucun
- ********************************************************************************************/
-void Gestionnaire::ajouterCoupon(const string& code, double rabais, int cout)
+void Gestionnaire::ajouterCoupon(Coupon* coupon)
 {
-	coupons_.push_back(new Coupon(code, rabais, cout));
+	coupons_.push_back(coupon);
 }
 
-
-
-
-/*******************************************************************************************
- * Methode: trouverMembre
- * Description: trouve le membre tel que son nom_=nomMmembre
- * Paramètres: - const string& : nom Membre
- * Type de retour: Membre*
- ********************************************************************************************/
 Membre* Gestionnaire::trouverMembre(const string& nomMembre) const
 {
-	for (int i = 0; i < membres_.size(); i++) {
+	for (size_t i = 0; i < membres_.size(); ++i) {
 		if (*membres_[i] == nomMembre) {
 			return membres_[i];
 		}
@@ -122,149 +53,170 @@ Membre* Gestionnaire::trouverMembre(const string& nomMembre) const
 	return nullptr;
 }
 
-
-
-
-/*******************************************************************************************
- * Methode: assignerBillet
- * Description: assigne un billet a un membre en appliquant un coupon ou non
- * Paramètres: - const string& : nomMembre , pnr , od , dateVol .
- *			   - double : prixBase
- *			   - TarifBillet : tarif
- *			   - TypeBillet : typeBillet
- * Type de retour: aucun
- ********************************************************************************************/
-void Gestionnaire::assignerBillet(const string& nomMembre, const string& pnr, double prixBase, const string& od, TarifBillet tarif, const string& dateVol,
-	bool utiliserCoupon, TypeBillet typeBillet)
-{
-	if (trouverMembre(nomMembre) == nullptr)return;
-	MembrePremium* membrePremium = static_cast<MembrePremium*>(trouverMembre(nomMembre));
-	double prixReel, rabais ;
-	if (typeBillet == Flight_Pass)
-		prixBase *= 10;
-	if (membrePremium->getTypeMembre() == Membre_Premium) {
-		if (membrePremium->getpointsCumulee() <= 20000) {
-			rabais = 0.005*membrePremium->getpointsCumulee() / 1000;
-			prixBase -= (rabais*prixBase);
-		}
+// TODO
+void Gestionnaire::assignerBillet(Billet* billet, const string& nomMembre, bool utiliserCoupon)
+	{
+	Membre* membre = trouverMembre(nomMembre);
+	double prix;
+	if (membre == nullptr) {
+		delete billet;
+		return;
 	}
-		if (utiliserCoupon) 
-			prixReel = prixBase - appliquerCoupon(membrePremium, prixBase); 
-		else 
-			prixReel = prixBase;
-		
-		membrePremium->ajouterBillet(pnr, prixReel, od, tarif, typeBillet, dateVol);
+	if (dynamic_cast<Solde*>(billet))
+		prix = dynamic_cast<Solde*>(billet)->getPrixBase();
+	else
+		prix = billet->getPrix();
+
+	if (utiliserCoupon) {
+		prix -= appliquerCoupon(membre, prix);
+	}
+
+	if (dynamic_cast<MembrePremium*>(membre)) {
+		double rabais = 0.005 * dynamic_cast<MembrePremium*>(membre)->getpointsCumulee() / 1000;
+		if (rabais > 0.1)
+			rabais = 0.1;
+
+		prix *= (1 - rabais);
+		billet->setPrix(prix);
+		dynamic_cast<MembrePremium*>(membre)->ajouterBillet(billet);
+	}
+	else if (dynamic_cast<MembreRegulier*>(membre)) {
+		billet->setPrix(prix);
+		dynamic_cast<MembreRegulier*>(membre)->ajouterBillet(billet);
+	}
+	else {
+		billet->setPrix(prix);
+		membre->ajouterBillet(billet);
+	}
 	
 }
 
-
-
-
-
-/*******************************************************************************************
- * Methode: appliquerCoupon
- * Description: applique le meilleur coupon (celui  qui a le rabais maximum) a un prix
- * Paramètres: - double : prix
- *			   - Membre* : membre
- * Type de retour: double
- ********************************************************************************************/
 double Gestionnaire::appliquerCoupon(Membre* membre, double prix)
 {
-	 MembrePremium* membrePremium = static_cast<MembrePremium*>(membre);
-	if (   membrePremium->getCoupons().size() ==0  ){
+	MembreRegulier* membreReg = dynamic_cast<MembreRegulier*>(membre);
+
+	if (!membreReg || membreReg->getCoupons().size() == 0) {
 		cout << "Le membre n'a pas de coupon utilisable\n";
 		return 0;
 	}
-	 Coupon* meilleurCoupon = membrePremium->getCoupons()[0];
-		for (int i = 1; i < membrePremium->getCoupons().size(); ++i) {
-			if (*membrePremium->getCoupons()[i] > *meilleurCoupon) {
-				meilleurCoupon = membrePremium->getCoupons()[i];
-			}
-		} 
-		*membrePremium -= meilleurCoupon; 
 
+	Coupon* meilleurCoupon = membreReg->getCoupons()[0];
+	vector<Coupon*> coupons = membreReg->getCoupons();
+	for (size_t i = 1; i < coupons.size(); ++i) {
+		if (*coupons[i] > *meilleurCoupon) {
+			meilleurCoupon = coupons[i];
+		}
+	}
+
+	*membreReg -= meilleurCoupon;
 
 	return prix * meilleurCoupon->getRabais();
 }
 
-
-
-
-
-/**************************************************************************************************************************
- * Methode: acheterCoupon
- * Description: Trouve d'abord le coupons avec le plus gros rabais tout en verifiant que le membre a les points qu'il faut,
- *				ensuite si le membre a les points en lui ajoute le coupons sinon en affiche message d'erreur
- * Paramètres: - const string& : nomMmembre
- * Type de retour: aucun
- **************************************************************************************************************************/
 void Gestionnaire::acheterCoupon(const string& nomMembre)
 {
 	if (coupons_.size() == 0) {
 		cout << "Le gestionnaire n'a pas de coupon!" << endl;
 		return;
 	}
-		MembreRegulier* membreCaste = static_cast<MembreRegulier*>(trouverMembre(nomMembre));
-		if (membreCaste == nullptr) {
-			return;
-		}
-		Coupon* meilleurCoupon = nullptr;
-		for (int i = 0; i < coupons_.size(); i++) {
-			if (membreCaste->getPoints() >= coupons_[i]->getCout()) {
+
+	Membre* membre = trouverMembre(nomMembre);
+
+	if (membre == nullptr) {
+		return;
+	}
+
+	Coupon* meilleurCoupon = nullptr;
+
+	if (auto membreRegulier = dynamic_cast<MembreRegulier*>(membre)) {
+		for (size_t i = 0; i < coupons_.size(); ++i) {
+			if (membreRegulier->peutAcheterCoupon(coupons_[i])) {
 				// Si on avait pas encore trouve de meilleur coupon, on fait la premiere assignation
 				if (meilleurCoupon == nullptr) {
 					meilleurCoupon = coupons_[i];
 				}
 				// Sinon on compare si le coupon courant a un rabais superieur au meilleur coupon
-				else if (*coupons_[i] > *meilleurCoupon) {
+				else if (*coupons_[i] > * meilleurCoupon) {
 					meilleurCoupon = coupons_[i];
 				}
 			}
 		}
-		if (trouverMembre(nomMembre)->getTypeMembre() == Membre_Regulier)
-		{
-			MembreRegulier* membreRegulier = static_cast<MembreRegulier*>(trouverMembre(nomMembre));
-			if (meilleurCoupon) {
-				membreRegulier->acheterCoupon(meilleurCoupon);
-			}
-			else 
-				cout << "Le membre ne peut acheter de coupon\n";
+		if (meilleurCoupon) {
+			membreRegulier->acheterCoupon(meilleurCoupon);
 		}
 		else {
-			MembrePremium* membrePremium = static_cast<MembrePremium*>(trouverMembre(nomMembre));
-			if (meilleurCoupon) {
-				membrePremium->acheterCoupon(meilleurCoupon);
-			}
-			else
-				cout << "Le membre ne peut acheter de coupon\n";
+			cout << "Le membre ne peut acheter de coupon\n";
 		}
 	}
+	else {
+		cout << "Le membre ne peut acheter de coupon\n";
+	}
+}
 
+// TODO
+double Gestionnaire::calculerRevenu()
+{
+	double revenu = 0;
+	for (unsigned int i = 0; i < membres_.size();i++) 
+		for (unsigned int j = 0; j < membres_[i]->getBillets().size(); j++)
+			revenu += membres_[i]->getBillets()[j]->getPrix();
+	return revenu;
+	
+	
+}
 
+// TODO
+int Gestionnaire::calculerNombreBilletsEnSolde()
+{
+	int k = 0;
+	
+	for (unsigned int i = 0; i < membres_.size(); i++)
+		for (unsigned int j = 0; j < membres_[i]->getBillets().size(); j++)
+			if (dynamic_cast<Solde*>(membres_[i]->getBillets()[j]))
+				k++;				
+	return k;
+	
+	
+				
+			
 
-/*******************************************************************************************
- * Methode: operator<<
- * Description: afficher tous les membre d'un gestionnaire avec leur infos
- * Paramètres: ostream& os, const Gestionnaire& gest
- * Type de retour: ostream
- ********************************************************************************************/
-ostream& operator<<(ostream& o, const Gestionnaire& gestionnaire)
+}
+
+// TODO: Retirer cette fonction par afficher()
+/*ostream& operator<<(ostream& o, const Gestionnaire& gestionnaire)
 {
 	o << "=================== ETAT ACTUEL DU PROGRAMME ==================\n\n";
-	
-	for (int i = 0; i < gestionnaire.membres_.size(); i++) {
-		if (gestionnaire.membres_[i]->getTypeMembre() == Membre_Regulier) {
-			MembreRegulier* membreRegulier = static_cast<MembreRegulier*>(gestionnaire.membres_[i]);
-			o << *membreRegulier;
-		}
-		else if (gestionnaire.membres_[i]->getTypeMembre() == Membre_Premium) {
-			MembrePremium* membrePremium = static_cast<MembrePremium*>(gestionnaire.membres_[i]);
-			o << *membrePremium;
-		}
+
+	for (int i = 0; i < gestionnaire.membres_.size(); ++i) {
+		if( typeid(gestionnaire.membres_[i]) == typeid(MembrePremium))
+			o << *dynamic_cast<MembrePremium*>(gestionnaire.membres_[i]);
+
+		else if (typeid(gestionnaire.membres_[i]) == typeid(MembreRegulier))
+			o << *dynamic_cast<MembreRegulier*>(gestionnaire.membres_[i]);
+
 		else 
-				o << *gestionnaire.membres_[i]; 
+			o << *gestionnaire.membres_[i];
 		
 	}
 
 	return o;
+}*/
+	
+// TODO
+void Gestionnaire::afficher(ostream& o)
+{
+	o << "=================== ETAT ACTUEL DU PROGRAMME ==================\n\n";
+
+	for (int i = 0; i < membres_.size(); ++i) {
+		if (dynamic_cast<MembrePremium*>(membres_[i]))
+			dynamic_cast<MembrePremium*>(membres_[i])->afficher(o);
+
+		else if (dynamic_cast<MembreRegulier*>(membres_[i]))
+			dynamic_cast<MembreRegulier*>(membres_[i])->afficher(o);
+
+		else
+			membres_[i]->afficher(o);
+
+	}
+	
 }

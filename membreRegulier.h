@@ -1,43 +1,41 @@
 /*
-* Titre : membreRegulier.h - Travail Pratique #3
-* Date : 20 Septembre 2019
-* Auteur : Jeffrey Lavallee
+* Titre : membreRegulier.h - Travail Pratique #4
+* Date : 5 Octobre 2019
+* Auteur : Philippe CÔTÉ-MORNEAULT
 */
-
 
 #ifndef MEMBRE_REGULIER_H
 #define MEMBRE_REGULIER_H
 
-
-#include "membre.h";
+#include "membre.h"
+#include "debogageMemoire.hpp"
 
 class MembreRegulier : public Membre {
 public:
+	// Constructeur
+	MembreRegulier(const string& nom);
 
-	//à faire
-	MembreRegulier(const string& nom, TypeMembre typeMembre);
-
+	// Getters
 	int getPoints() const;
 	vector<Coupon*> getCoupons() const;
 	
-
-	void acheterCoupon(Coupon* coupon);
 	Membre& operator+=(Coupon* coupon);
 	Membre& operator-=(Coupon* coupon);
 	void modifierPoints(int points);
-
-	//à faire 
-	void ajouterBillet(const string& pnr, double prix, const string& od, TarifBillet tarif, TypeBillet typeBillet, const string& dateVol);
-
+	void ajouterBillet(Billet* billet) override;
 
 	double calculerPoints(Billet* billet) const;
+	// TODO
+	bool peutAcheterCoupon(Coupon* coupon);
+	virtual void acheterCoupon(Coupon* coupon);
 
-	//à faire
-	friend ostream& operator<<(ostream& os, const MembreRegulier& membreRegulier);
+	// TODO: Retirer cette fonction par afficher()
+	//friend ostream& operator<<(ostream& os, const MembreRegulier& membreRegulier);
 
+	// TODO
+	void afficher(ostream& o);
 protected:
 	int points_;
 	vector<Coupon*> coupons_;
 };
-
-#endif
+#endif // !MEMBRE_REGULIER_H

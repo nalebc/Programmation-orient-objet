@@ -1,7 +1,8 @@
 /*
- * Date : 12 Septembre 2019
- * Auteur : Philippe CÔTÉ-MORNEAULT
- */
+* Titre : gestionnaire.h - Travail Pratique #4
+* Date : 5 Octobre 2019
+* Auteur : Philippe CÔTÉ-MORNEAULT
+*/
 
 #ifndef GESTIONNAIRE_H
 #define	GESTIONNAIRE_H
@@ -9,41 +10,42 @@
 #include <vector>
 
 #include "membrePremium.h"
+#include "solde.h"
+#include "debogageMemoire.hpp"
 
 class Gestionnaire {
 public:
-	// Constructeurs
+	// Constructeur
 	Gestionnaire();
 
-	 ~Gestionnaire();
+	~Gestionnaire();
 
 	// Getters
 	vector<Membre*> getMembres() const;
 	vector<Coupon*> getCoupons() const;
 
-	//à modifier
-	void ajouterMembre(const string& nomMembre, TypeMembre typeMembre);
-
-	void ajouterCoupon(const string& code, double rabais, int cout);
+	void ajouterMembre(Membre* membre);
+	void ajouterCoupon(Coupon* coupon);
 
 	Membre* trouverMembre(const string& nomMembre) const;
-
-	//à modifier
-	void assignerBillet(const string& nomMembre, const string& pnr, double prixBase, const string& od, TarifBillet tarif, const string& dateVol, bool utiliserCoupon, TypeBillet typeBillet);
-
-	//à modifier
+	// TODO
+	void assignerBillet(Billet* billet, const string& nomMembre, bool utiliserCoupon);
 	double appliquerCoupon(Membre* membre, double prix);
-	
-	//à modifier
 	void acheterCoupon(const string& nomMembre);
+	// TODO
+	double calculerRevenu();
+	// TODO
+	int calculerNombreBilletsEnSolde();
 
-	//à modifier
-	friend ostream& operator<<(ostream& o, const Gestionnaire& gestionnaire);
+	// TODO: Retirer cette fonction par afficher()
+	//friend ostream& operator<<(ostream& o, const Gestionnaire& gestionnaire);
+
+	// TODO
+	void afficher(ostream& o);
 private:
 	vector<Membre*> membres_;
 	vector<Coupon*> coupons_;
 };
-
 #endif // !GESTIONNAIRE_H
 
 

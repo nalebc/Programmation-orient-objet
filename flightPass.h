@@ -1,30 +1,34 @@
 /*
-* Titre : membrePremium.h - Travail Pratique #3
-* Date : 20 Septembre 2019
-* Auteur : Jeffrey Lavallee
+* Titre : flightPass.h - Travail Pratique #4
+* Date : 5 Octobre 2019
+* Auteur : Philippe CÔTÉ-MORNEAULT
 */
 
 #ifndef FLIGHT_PASS_H
 #define FLIGHT_PASS_H
 
+#include <iomanip>
+
 #include "billet.h"
 
 class FlightPass : public Billet {
 public:
-	//à faire 
-	FlightPass(const string& pnr, const string& nomPassager, double prix, const string& od, TarifBillet tarif, TypeBillet typeBillet);
+	FlightPass(const string& pnr, double prix, const string& od, TarifBillet tarif);
 
-	//à faire 
+	int getNbUtilisationsRestante() const;
+	//test
+	
 	void decrementeNbUtilisations();
 
-	//à faire 
-	 int getNbUtilisationsRestante() const;
+	// TODO
+	FlightPass* clone();
 
-	 //à faire 
-	friend ostream& operator<<(ostream& os ,const FlightPass& flightpass);
+	// TODO : Remplacer cette fonction par la methode afficher()
+	//friend ostream& operator<<(ostream& o, const FlightPass& flightpass);
 
+	// TODO
+	void afficher(ostream& o);
 private:
 	 int nbUtilisationsRestante_;
 };
-
-#endif
+#endif // !FLIGHT_PASS_H

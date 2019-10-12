@@ -1,23 +1,16 @@
 /*
- * Date : 12 Septembre 2019
- * Auteur : Philippe CÔTÉ-MORNEAULT
- */
+* Titre : main.cpp - Travail Pratique #4
+* Date : 5 Octobre 2019
+* Auteur : Philippe CÔTÉ-MORNEAULT
+*/
 
+/* REPONSES AUX QUESTIONS
 
-/* Reponses aux questions : 
-*	Réponse 2 : on utilise static_cast pour convertir convertir une classe mère vers une classe fille (ou vice versa ),
-*				pour qu'on puisse accéder aux méthodes ou attributs des classes qui ne sont pas accessibles directement,par exemple
-*				on convertit un objet de type class mère vers un objet de type class fille pour utiliser les méthodes
-*				de la class fille sur la class mère 
-*	Réponse 1 : Sans le typeMembre dans la class membre, il y'aura aucune façon de savoir si un membre est un premium ou regulier, parce que
-*				dans la class gestionnaire on a déclaré un vector de type Membre*, et on a mis tous les membres dedant, donc pour les différencier
-*				fallait mettre le typeMembre dans la class membre. En plus on devait vérifier le type d'un membre avant de l'afficher par exemple, ou
-*				de lui acheter un coupon ...etc,et pour utiliser les méthodes de la class dérivé (le stati_cast) il fallait vérifier le type aussi
-*				sinon on aurait eu des erreurs au moment où on voudrait utiliser ces méthodes. Donc si le typeMembre n'était pas là, on pourra pas 
-*				faire la différence entre les membres, et on devrait ajouter deux autres vector dans gestionnaire pour mettre chaque type de membre 
-*				dans un vector et les traiter séparèment.
-*				
-*				
+1.	Nous remarquons que le classe Solde à une méthode sans implémentation, getPrixBase(). Dans le contexte du polymorphisme, 
+    quelle est l’utilité d’avoir une méthode dans une classe parent qui ne possède aucune implémentation?
+
+2.	Pour quelle raison devons-nous déclarer certains destructeurs virtuels? 
+
 */
 
 #include <string>
@@ -25,6 +18,9 @@
 #include <vector>
 #include "debogageMemoire.hpp"
 #include "gestionnaire.h"
+#include "flightPassSolde.h"
+#include "billetRegulierSolde.h"
+
 using namespace std;
 
 int main() {
@@ -32,16 +28,17 @@ int main() {
 
 	vector<bool> tests;
 
-
 	// TESTS
-	Billet* b1 = new Billet();
-	Billet* b2 = new Billet("A1A1A1", "Fred", 3000, "YUL - CDG", TarifBillet::Premiere, Billet_Base);
+	Billet* b1 = new BilletRegulier("B4Y6S1", 2000, "YUL - LGA", TarifBillet::Premiere, "2019-12-21");
+	Billet* b2 = new BilletRegulier("A1A1A1", 3000, "YUL - CDG", TarifBillet::Premiere, "2019-12-21");
+	Billet* brs1 = new BilletRegulierSolde("O8I9P0", 2500, "YUL - LGA", TarifBillet::PremiumEconomie, "2019-12-21", 0.5);
+	Billet* fps1 = new FlightPassSolde("HH6T3R", 25000, "YUL - LGA", TarifBillet::PremiumEconomie, 0.25);
 
 	//Membre * m1 = new Membre();
-	Membre * m2 = new Membre("John", Membre_Occasionnel);
+	Membre * m2 = new Membre("John");
 	MembrePremium* mp1 = new MembrePremium("Alex");
 
-	MembreRegulier* mr1 = new MembreRegulier("Marc", Membre_Regulier);
+	MembreRegulier* mr1 = new MembreRegulier("Marc");
 
 	Coupon* c1 = new Coupon("5%", 0.05, 500);
 	Coupon* c2 = new Coupon("10%", 0.1, 900);
@@ -56,16 +53,27 @@ int main() {
 		&& b1->formatTarif(TarifBillet::Premiere) == "Premiere"
 		&& b1->formatTarif(TarifBillet::PremiumEconomie) == "Premium economie");
 
+	// Test 2-3: getPrix()
+	tests.push_back(brs1->getPrix() == 2500 * (1 - 0.5));
+	tests.push_back(fps1->getPrix() == 25000 * (1 - 0.25));
+
+	// Test 4-5: clone()
+	Billet* brs2 = brs1->clone();
+	tests.push_back(typeid(*brs2) == typeid(BilletRegulierSolde));
+
+	Billet* fps2 = fps1->clone();
+	tests.push_back(typeid(*fps2) == typeid(FlightPassSolde));
+
 	/*
 	* Tests Coupon
 	*/
-	// Test 2: operateur >
+	// Test 6: operateur >
 	tests.push_back(*c3 > *c2
 		&& *c2 > *c1
 		&& !(*c1 > *c2)
 		&& !(*c2 > *c3));
 
-	// Test 3: operateur <
+	// Test 7: operateur <
 	tests.push_back(*c1 < *c2
 		&& *c2 < *c3
 		&& !(*c3 < *c2)
@@ -74,27 +82,29 @@ int main() {
 	/*
 	* Tests Membre
 	*/
-	// Test 4 - 5 - 6: initialisation de membre regulier
+	// Test 8-9-10: initialisation de membre regulier
 	tests.push_back(mr1->getCoupons().size() == 0
 		&& mr1->getBillets().size() == 0);
 	tests.push_back(mr1->getNom() == "Marc");
-	tests.push_back(mr1->getTypeMembre() == Membre_Regulier);
+	tests.push_back(typeid(*mr1) == typeid(MembreRegulier));
 
-	//test 7-8-9 initialisation de membre premium
+	// Test 11-12-13: initialisation de membre premium
 	tests.push_back(mp1->getNom() == "Alex");
-	tests.push_back(mp1->getTypeMembre() == Membre_Premium);
+	tests.push_back(typeid(*mp1) == typeid(MembrePremium));
 	tests.push_back(mp1->getCoupons().size() == 0
 		&& mp1->getBillets().size() == 0);
 
-	// Tests 10: Modifier points
+	// Test 14: Modifier points
 	mr1->modifierPoints(150);
 	mr1->modifierPoints(20);
 	mr1->modifierPoints(-50);
 
 	tests.push_back(mr1->getPoints() == 120);
+
+
 	mr1->modifierPoints(-120);
 
-	// Tests 11 - 12: calculer points
+	// Test 15-16: calculer points
 	b1->setTarif(TarifBillet::Economie);
 	b1->setPrix(1000);
 
@@ -106,55 +116,72 @@ int main() {
 
 	tests.push_back(mr1->calculerPoints(b1) == 150
 		&& mr1->calculerPoints(b2) == 450);
-	
-	// Tests 13 - 14 - 15: Ajouter billets Membre Regulier
-	mr1->ajouterBillet("A1B2C3", 3000, "YUL - YYZ", TarifBillet::Premiere, Billet_Regulier ,"2019-12-21");
+
+	// Test 17-18-19-20-21: Ajouter billets Membre Regulier
+	mr1->ajouterBillet(new BilletRegulier("A1B2C3", 3000, "YUL - YYZ", TarifBillet::Premiere, "2019-12-21"));
 	tests.push_back(mr1->getBillets().size() == 1
 		&& mr1->getBillets()[0]->getNomPassager() == "Marc"
 		&& mr1->getPoints() == 600);
 
-	mr1->ajouterBillet("D4E5F6", 1000, "YUL - YVR", TarifBillet::Affaire, Flight_Pass, "2019-12-21");
+	mr1->ajouterBillet(new FlightPass("D4E5F6", 1000, "YUL - YVR", TarifBillet::Affaire));
 	tests.push_back(mr1->getBillets().size() == 2);
 
-	mr1->ajouterBillet("H7I8J9", 1500, "YUL - LGA", TarifBillet::PremiumEconomie, Billet_Regulier, "2019-12-21");
+	mr1->ajouterBillet(new BilletRegulier("H7I8J9", 1500, "YUL - LGA", TarifBillet::PremiumEconomie, "2019-12-21"));
 	tests.push_back(mr1->getBillets().size() == 3
 		&& mr1->getPoints() == 1050);
 
-	//Test 16 17 18 ajouter Billets Membre Premium
-	mp1->ajouterBillet("csd22", 3000, "YUL - YYZ", TarifBillet::Premiere, Billet_Regulier, "2019-12-21");
+	mr1->ajouterBillet(new FlightPassSolde("A6V3F4", 4000, "YUL - YVR", TarifBillet::Affaire, 0.2));
+	tests.push_back(mr1->getBillets().size() == 4
+		&& mr1->getPoints() == 1520);
+
+	mr1->ajouterBillet(new BilletRegulierSolde("G7T5E3", 850, "YUL - YVR", TarifBillet::Economie, "2019-12-21", 0.1));
+	tests.push_back(mr1->getBillets().size() == 5
+		&& mr1->getPoints() == 1596);
+
+	mr1->modifierPoints(-546);
+
+	// Test 22-23-24-25-26: ajouter Billets Membre Premium
+	mp1->ajouterBillet(new BilletRegulier("csd22", 3000, "YUL - YYZ", TarifBillet::Premiere, "2019-12-21"));
 	tests.push_back(mp1->getBillets().size() == 1
 		&& mp1->getBillets()[0]->getNomPassager() == "Alex"
 		&& mp1->getPoints() == 600
 		&& mp1->getpointsCumulee() == 600);
 
-	mp1->ajouterBillet("vbrbb", 1000, "YUL - YVR", TarifBillet::Affaire, Flight_Pass, "2019-12-21");
+	mp1->ajouterBillet(new FlightPass("vbrbb", 1000, "YUL - YVR", TarifBillet::Affaire));
 	tests.push_back(mp1->getBillets().size() == 2 && mp1->getpointsCumulee() == mp1->getPoints());
 
-	mp1->ajouterBillet("H7I8Jcv9", 1500, "YUL - LGA", TarifBillet::PremiumEconomie, Billet_Regulier, "2019-12-21");
+	mp1->ajouterBillet(new BilletRegulier("H7I8Jcv9", 1500, "YUL - LGA", TarifBillet::PremiumEconomie, "2019-12-21"));
 	tests.push_back(mp1->getBillets().size() == 3
 		&& mp1->getPoints() == 1050 && mp1->getpointsCumulee() == 1050);
-	
 
-	//Test 19-20 utilisee billets flight Pass
+	mp1->ajouterBillet(new FlightPassSolde("B9O7R3", 6500, "YUL - YVR", TarifBillet::Affaire, 0.25));
+	tests.push_back(mp1->getBillets().size() == 4
+		&& mp1->getPoints() == 1687 && mp1->getpointsCumulee() == 1687);
+
+	mp1->ajouterBillet(new BilletRegulierSolde("D2R5T1", 750, "YUL - YVR", TarifBillet::Economie, "2019-12-21", 0.2));
+	tests.push_back(mp1->getBillets().size() == 5
+		&& mp1->getPoints() == 1747 && mp1->getpointsCumulee() == 1747);
+
+	mp1->modifierPoints(-697);
+	mp1->modifierPointsCumulee(-697);
+
+
+	// Test 27-28 utilisee billets flight Pass
 	for (int i = 0; i < 8; i++) {
-		mp1->utiliserBillet("vbrbb");
+		mp1->utiliserBillet("B9O7R3");
 	}
-	mp1->utiliserBillet("vbrbb");
-	
+	mp1->utiliserBillet("B9O7R3");
+
+	tests.push_back(mp1->getBillets().size() == 5);
+
+	mp1->utiliserBillet("B9O7R3");
+	tests.push_back(mp1->getBillets().size() == 4);
+
+	// Test 29 utilisee billets regulier solde
+	mp1->utiliserBillet("D2R5T1");
 	tests.push_back(mp1->getBillets().size() == 3);
-	
 
-	mp1->utiliserBillet("vbrbb");
-	tests.push_back(mp1->getBillets().size() == 2);
-
-	//Test 21 utilisee billets regulier
-	mp1->utiliserBillet("csd22");
-	tests.push_back(mp1->getBillets().size() == 1);
-	
-	
-	
-
-	// Tests 22 - 23 - 24: Operateur +=
+	// Tests 30-31-32: Operateur +=
 	tests.push_back(&(*mr1 += c1) == mr1);
 
 	*mr1 += c2;
@@ -163,7 +190,7 @@ int main() {
 	*mr1 += c1;
 	tests.push_back(mr1->getCoupons().size() == 3);
 
-	// Tests 25 - 26 - 27: Operateur -=
+	// Test 33-34-35: Operateur -=
 	tests.push_back(&(*mr1 -= c2) == mr1);
 	tests.push_back(mr1->getCoupons().size() == 2
 		&& mr1->getCoupons()[0] == c1
@@ -175,7 +202,7 @@ int main() {
 		&& mr1->getCoupons()[0] == c1
 		&& mr1->getCoupons()[1] == c2);
 
-	// Tests 28 - 29 - 30 : Acheter coupon Membre regulier
+	// Test 36-37-38 : Acheter coupon Membre regulier
 	// Pas assez de points
 	mr1->acheterCoupon(c3);
 
@@ -194,68 +221,67 @@ int main() {
 		&& mr1->getCoupons().size() == 4
 		&& mr1->getCoupons()[3] == c1);
 
-
-	//test 30-31 acheter coupons Membre Premium
+	// Test 39-40 acheter coupons Membre Premium
 	mp1->acheterCoupon(c3);
 	tests.push_back(mp1->getCoupons().size() == 0);
 
-	mp1->modifierPointsCumules(632);
+
 	mp1->modifierPoints(632);
+	mp1->modifierPointsCumulee(632);
 	mp1->acheterCoupon(c3);
 	tests.push_back(mp1->getCoupons().size() == 1 && mp1->getPoints() == 11);
 
-	// Tests 32 - 33: Operateur == 
+	// Test 41-42: Operateur == 
 	tests.push_back(*mr1 == "Marc"
 		&& *m2 == "John"
 		&& !(*mr1 == "John")
 		&& !(*m2 == "Marc"));
-
 
 	tests.push_back("Marc" == *mr1
 		&& "John" == *m2
 		&& !("Marc" == *m2)
 		&& !("John" == *mr1));
 
-	
+	/*
+	* Tests Gestionnaire
+	*/
 
-//	* Tests Gestionnaire
-	
-
-	// Testss 34: Initialisation Regulier
+	// Test 43: Initialisation Regulier
 	tests.push_back(g->getCoupons().size() == 0
 		&& g->getMembres().size() == 0);
 
-	// Tests 35 - 36: Ajouter membre
-	g->ajouterMembre("Marc", Membre_Regulier);
-	g->ajouterMembre("John", Membre_Regulier);
+	// Test 44-45: Ajouter membre
+	g->ajouterMembre(new MembreRegulier("Marc"));
+	g->ajouterMembre(new MembreRegulier("John"));
 
 	tests.push_back(g->getMembres().size() == 2);
 
-	g->ajouterMembre("Robert", Membre_Regulier);
+	g->ajouterMembre(new MembreRegulier("Robert"));
 
-	tests.push_back(g->getMembres().size() == 3 && g->getMembres()[2]->getTypeMembre() == Membre_Regulier);
+	tests.push_back(g->getMembres().size() == 3 && typeid(*g->getMembres()[2]) == typeid(MembreRegulier));
 
-	//Tests 37 : ajouter Membre Premium
-	g->ajouterMembre("Alex", Membre_Premium);
-	tests.push_back(g->getMembres().size() == 4 && g->getMembres()[3]->getTypeMembre() == Membre_Premium);
+	// Test 46: ajouter Membre Premium
+	g->ajouterMembre(new MembrePremium("Alex"));
+	tests.push_back(g->getMembres().size() == 4 && typeid(*g->getMembres()[3]) == typeid(MembrePremium));
 
-	// Tests 38 - 39: Ajouter coupon
-	g->ajouterCoupon("5%", 0.05, 500);
-	g->ajouterCoupon("10%", 0.1, 900);
+	// Test 47-48: Ajouter coupon
+	g->ajouterCoupon(new Coupon("5%", 0.05, 500));
+	g->ajouterCoupon(new Coupon("10%", 0.1, 900));
 
 	tests.push_back(g->getCoupons().size() == 2);
 
-	g->ajouterCoupon("20%", 0.2, 1700);
+	g->ajouterCoupon(new Coupon("20%", 0.2, 1700));
 
 	tests.push_back(g->getCoupons().size() == 3);
 
-	// Tests 40: Trouver membre
+	// Test 49: Trouver membre
 	tests.push_back(g->trouverMembre("John") != nullptr
 		&& g->trouverMembre("ccc") == nullptr);
 
-	// Tests 41 - 42: Acheter coupon Membre Regulier
+	// Test 50-51: Acheter coupon Membre Regulier
 	MembreRegulier* marc = static_cast<MembreRegulier*>(g->getMembres()[0]);
 	MembreRegulier* john = static_cast<MembreRegulier*>(g->getMembres()[1]);
+	MembreRegulier* robert = static_cast<MembreRegulier*>(g->getMembres()[2]);
 	MembrePremium* alex = static_cast<MembrePremium*>(g->getMembres()[3]);
 
 	marc->modifierPoints(1000);
@@ -275,9 +301,9 @@ int main() {
 		&& marc->getCoupons()[1]->getCode() == "20%"
 		&& marc->getPoints() == 1300);
 
-	//Tests 43 : Acheter coupon Membre Premium
+	//Tests 52 : Acheter coupon Membre Premium
 	alex->modifierPoints(950);
-	alex->modifierPointsCumules(950);
+	alex->modifierPointsCumulee(950);
 	g->acheterCoupon("Alex");
 
 	tests.push_back(alex->getCoupons().size() == 1
@@ -285,13 +311,13 @@ int main() {
 		&& alex->getCoupons()[0]->getCode() == "10%");
 
 	alex->modifierPoints(-59);
-	alex->modifierPointsCumules(-950);
+	alex->modifierPointsCumulee(-950);
 	*alex -= g->getCoupons()[1];
 
-	// Tests  44 - 45: Assigner billet avec billet Regulier:
-	g->assignerBillet("John", "A1B2C3", 1000, "YUL - YYZ", TarifBillet::PremiumEconomie, "2019-12-21", true, Billet_Regulier);
-	g->assignerBillet("Marc", "D4E5F6", 2000, "YUL - YYZ", TarifBillet::Affaire, "2019-12-21", false, Billet_Regulier);
-	g->assignerBillet("Marc", "H7I8J9", 2000, "YUL - YYZ", TarifBillet::Affaire, "2019-12-21", true, Billet_Regulier);
+	// Test 53-54: Assigner billet avec billet Regulier:
+	g->assignerBillet(new BilletRegulier("A1B2C3", 1000, "YUL - YYZ", TarifBillet::PremiumEconomie, "2019-12-21"), "John", true);
+	g->assignerBillet(new BilletRegulier("D4E5F6", 2000, "YUL - YYZ", TarifBillet::Affaire, "2019-12-21"), "Marc", false);
+	g->assignerBillet(new BilletRegulier("H7I8J9", 2000, "YUL - YYZ", TarifBillet::Affaire, "2019-12-21"), "Marc", true);
 
 	tests.push_back(john->getBillets().size() == 1
 		&& john->getBillets()[0]->getPrix() == 1000
@@ -304,10 +330,10 @@ int main() {
 		&& marc->getPoints() == 1960
 		&& marc->getCoupons().size() == 1);
 
-	//test 46-47: Assigner billet avec flightPass
-	g->assignerBillet("John", "f1", 1000, "YUL - YYZ", TarifBillet::PremiumEconomie, "2019-12-21", true, Flight_Pass);
-	g->assignerBillet("Marc", "f2", 2000, "YUL - YYZ", TarifBillet::Affaire, "2019-12-21", false, Flight_Pass);
-	g->assignerBillet("Marc", "f3", 2000, "YUL - YYZ", TarifBillet::Affaire, "2019-12-21", true, Flight_Pass);
+	// Test 55-56: Assigner billet avec flightPass
+	g->assignerBillet(new FlightPass("f1", 10000, "YUL - YYZ", TarifBillet::PremiumEconomie), "John", true);
+	g->assignerBillet(new FlightPass("f2", 20000, "YUL - YYZ", TarifBillet::Affaire), "Marc", false);
+	g->assignerBillet(new FlightPass("f3", 20000, "YUL - YYZ", TarifBillet::Affaire), "Marc", true);
 
 	tests.push_back(john->getBillets().size() == 2
 		&& john->getBillets()[1]->getPrix() == 10000
@@ -320,22 +346,59 @@ int main() {
 		&& marc->getPoints() == 6060
 		&& marc->getCoupons().size() == 0);
 
-	//test 48-49: Assigner billet avec membre Premium
-	g->assignerBillet("Alex", "f1", 1000, "YUL - YYZ", TarifBillet::PremiumEconomie, "2019-12-21", true, Flight_Pass);
+	// Test 57: Assigner billet avec membre Premium
+	g->assignerBillet(new FlightPass("f1", 10000, "YUL - YYZ", TarifBillet::PremiumEconomie), "Alex", true);
 
 	alex->acheterCoupon(c2);
 
-	g->assignerBillet("Alex", "A1B2C3", 1000, "YUL - YYZ", TarifBillet::PremiumEconomie, "2019-12-21", true, Billet_Regulier);
+	g->assignerBillet(new BilletRegulier("A1B2C3", 1000, "YUL - YYZ", TarifBillet::PremiumEconomie, "2019-12-21"), "Alex", true);
 
 	tests.push_back(alex->getBillets().size() == 2
 		&& alex->getBillets()[0]->getPrix() == 10000
-		&& alex->getBillets()[0]->getTypeBillet() == Flight_Pass
-		&& alex->getBillets()[1]->getTypeBillet() == Billet_Regulier
+		&& typeid(*alex->getBillets()[0]) == typeid(FlightPass)
+		&& typeid(*alex->getBillets()[1]) == typeid(BilletRegulier)
 		&& alex->getPoints() == 299
 		&& alex->getpointsCumulee() == 1189
 		&& alex->getCoupons().size() == 0);
-	
-	
+
+	// Test 58-59: Assigner BilletRegulierSolde
+	g->assignerBillet(new BilletRegulierSolde("T8U7P0", 4500, "YUL - YYZ", TarifBillet::Economie, "2019-12-21", 0.25), "Robert", false);
+	tests.push_back(robert->getBillets().size() == 1
+		&& robert->getPoints() == 337
+		&& robert->getBillets()[0]->getPrix() == 0.75 * 4500
+		&& typeid(*robert->getBillets()[0]) == typeid(BilletRegulierSolde));
+
+	john->acheterCoupon(c2);
+	g->assignerBillet(new BilletRegulierSolde("G7U8E2", 2500, "YUL - YYZ", TarifBillet::Economie, "2019-12-21", 0.5), "John", true);
+	tests.push_back(john->getBillets().size() == 3
+		&& john->getPoints() == 412
+		&& john->getBillets()[2]->getPrix() == 2500 * 0.9 * 0.5
+		&& typeid(*john->getBillets()[2]) == typeid(BilletRegulierSolde));
+
+	// Test 60-61: Assigner FlightPassSolde
+	g->assignerBillet(new FlightPassSolde("T5R2F4", 10000, "YUL - YYZ", TarifBillet::Economie, 0.1), "Alex", true);
+	tests.push_back(alex->getBillets().size() == 3
+		&& alex->getpointsCumulee() == 2083
+		&& alex->getPoints() == 1193
+		&& alex->getBillets()[2]->getPrix() == 10000 * (1 - 1189 * 0.005 / 1000) * 0.9
+		&& typeid(*alex->getBillets()[2]) == typeid(FlightPassSolde));
+
+	alex->modifierPoints(700);
+	alex->modifierPointsCumulee(700);
+	alex->acheterCoupon(c2);
+	g->assignerBillet(new FlightPassSolde("J9K5L0", 25000, "YUL - YYZ", TarifBillet::Economie, 0.5), "Alex", true);
+	tests.push_back(alex->getBillets().size() == 4
+		&& alex->getpointsCumulee() == 3892
+		&& alex->getPoints() == 2128
+		&& alex->getBillets()[3]->getPrix() == 25000 * 0.9 * (1 - 2783 * 0.005 / 1000) * 0.5
+		&& typeid(*alex->getBillets()[3]) == typeid(FlightPassSolde));
+
+	// Test 62: calculerNombreBilletsEnSolde
+	tests.push_back(g->calculerNombreBilletsEnSolde() == 4);
+
+	// Test 63: calculerRevenu
+	tests.push_back(int(g->calculerRevenu()) == 88035);
+
 	// Affichage des tests
 	cout << "TESTS" << endl;
 	for (unsigned int i = 0; i < tests.size(); i++)
@@ -349,17 +412,21 @@ int main() {
 
 	cout << endl;
 	//// Affichage du programme
-	cout << *g;
+	g->afficher(cout);
 
 	// Liberation de la memoire
 	delete b1;
 	delete b2;
-	                       
+	delete brs1;
+	delete brs2;
+	delete fps1;
+	delete fps2;
+
 	delete mp1;
 	delete mr1;
 	delete m2;
 
-	delete c1; 
+	delete c1;
 	delete c2;
 	delete c3;
 

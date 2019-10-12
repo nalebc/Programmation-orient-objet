@@ -1,7 +1,8 @@
 /*
- * Date : 12 Septembre 2019
- * Auteur : Philippe CÔTÉ-MORNEAULT
- */
+* Titre : coupon.h - Travail Pratique #4
+* Date : 5 Octobre 2019
+* Auteur : Philippe CÔTÉ-MORNEAULT
+*/
 
 #ifndef COUPON_H
 #define COUPON_H
@@ -32,12 +33,10 @@ public:
 	bool operator>(const Coupon& coupon) const;
 	bool operator<(const Coupon& coupon) const;
 
-	friend ostream& operator<<(ostream& o, const Coupon& coupon);
+	void afficher(ostream& o) const;
 private:
 	string code_;
 	double rabais_;
 	int cout_;
 };
-
 #endif // !COUPON_H
-

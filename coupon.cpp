@@ -1,7 +1,8 @@
 /*
- * Date : 12 Septembre 2019
- * Auteur : Philippe CÔTÉ-MORNEAULT
- */
+* Titre : coupon.cpp - Travail Pratique #4
+* Date : 5 Octobre 2019
+* Auteur : Philippe CÔTÉ-MORNEAULT
+*/
 
 #include "coupon.h"
 
@@ -63,7 +64,7 @@ bool Coupon::operator<(const Coupon& coupon) const
 	return rabais_ < coupon.rabais_;
 }
 
-ostream& operator<<(ostream& o, const Coupon& coupon)
+void Coupon::afficher(ostream& o) const
 {
-	return o << "\t\t- Coupon " << coupon.code_ << ". Rabais : " << coupon.rabais_ << "." << endl;
+	o << "\t\t- Coupon " << code_ << ". Rabais : " << rabais_ << "." << endl;
 }

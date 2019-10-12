@@ -29,6 +29,6 @@ public:
 	FlightPassSolde* clone();
 
 	// TODO
-	void afficher(ostream& o);
+	void afficher(ostream& o)const;
 };
 #endif // !FLIGHT_PASS_SOLDE_H

@@ -17,7 +17,7 @@ public:
 
 	// Getter
 	double getPourcentageSolde() const;
-	virtual double getPrixBase() = 0;
+	virtual double getPrixBase() = 0 ;
 
 	// Setter
 	void setPourcentageSolde(double pourcentageSolde);

@@ -31,7 +31,7 @@ FlightPassSolde* FlightPassSolde::clone()
 }
 
 // TODO
-void FlightPassSolde::afficher(ostream& o)
+void FlightPassSolde::afficher(ostream& o)const
 {
 	FlightPass::afficher(o);
 	o << "\t\t\t" << setw(11) << "- Pourcentage solde " << ": " << pourcentageSolde_ << "%" << endl;

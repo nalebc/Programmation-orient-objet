@@ -37,7 +37,7 @@ void MembrePremium::ajouterBillet(Billet* billet)
 	modifierPointsCumulee(calculerPoints(billets_.back()));
 }
 
-double MembrePremium::calculerCoutCoupon(Coupon* coupon)
+double MembrePremium::calculerCoutCoupon(Coupon* coupon)const
 {
 	double rabais = 0.01 * pointsCumulee_ / 1000;
 
@@ -48,7 +48,7 @@ double MembrePremium::calculerCoutCoupon(Coupon* coupon)
 }
 
 // TODO
-bool MembrePremium::peutAcheterCoupon(Coupon* coupon)
+bool MembrePremium::peutAcheterCoupon(Coupon* coupon)const
 {
 	return (points_ >= calculerCoutCoupon(coupon));
 
@@ -72,7 +72,7 @@ void MembrePremium::acheterCoupon(Coupon* coupon)
 }*/
 
 // TODO
-void MembrePremium::afficher(ostream& o)
+void MembrePremium::afficher(ostream& o)const
 {
 	MembreRegulier::afficher(o);
 	o << "\t- Points cumulee: " << pointsCumulee_ << endl;

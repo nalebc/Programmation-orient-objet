@@ -30,7 +30,7 @@ public:
 	//friend ostream& operator<<(ostream& o, const BilletRegulier& billet);
 
 	// TODO
-	void afficher(ostream& o) override;
+	void afficher(ostream& o) const ;
 private:
 	string dateVol_;
 };

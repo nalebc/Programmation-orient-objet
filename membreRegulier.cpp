@@ -73,7 +73,7 @@ double MembreRegulier::calculerPoints(Billet* billet) const
 }
 
 // TODO
-bool MembreRegulier::peutAcheterCoupon(Coupon* coupon)
+bool MembreRegulier::peutAcheterCoupon(Coupon* coupon) const
 {
 	return (points_ >= coupon->getCout());
 }
@@ -99,7 +99,7 @@ void MembreRegulier::acheterCoupon(Coupon* coupon)
 }*/
 
 // TODO
-void MembreRegulier::afficher(ostream& o)
+void MembreRegulier::afficher(ostream& o) const
 {
 	Membre::afficher(o);
 	o << "\t" << "- Points : " << points_ << endl;

@@ -148,7 +148,7 @@ Membre& Membre::operator=(const Membre& membre)
 }*/
 
 // TODO
-void Membre::afficher(ostream& o)
+void Membre::afficher(ostream& o) const
 {
 	o << setfill(' ');
 	o << "- Membre " << nom_ << ":" << endl;

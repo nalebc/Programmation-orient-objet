@@ -39,7 +39,7 @@ BilletRegulier* BilletRegulier::clone()
 }*/
 
 // TODO
-void BilletRegulier::afficher(ostream& o) {
+void BilletRegulier::afficher(ostream& o)const {
 	Billet::afficher(o);
 	o << "\t\t\t" << setw(11) << "- Vol le" << ": " << dateVol_ << endl;
 }

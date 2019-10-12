@@ -49,7 +49,7 @@ public:
 	//friend ostream& operator<<(ostream& o, const Membre& membre);
 
 	// TODO
-	virtual void afficher(ostream& o);
+	 void afficher(ostream& o)const;
 protected:
 	string nom_;
 	vector<Billet*> billets_;

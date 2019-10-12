@@ -154,7 +154,7 @@ void Gestionnaire::acheterCoupon(const string& nomMembre)
 }
 
 // TODO
-double Gestionnaire::calculerRevenu()
+double Gestionnaire::calculerRevenu()const
 {
 	double revenu = 0;
 	for (unsigned int i = 0; i < membres_.size();i++) 
@@ -166,7 +166,7 @@ double Gestionnaire::calculerRevenu()
 }
 
 // TODO
-int Gestionnaire::calculerNombreBilletsEnSolde()
+int Gestionnaire::calculerNombreBilletsEnSolde()const
 {
 	int k = 0;
 	
@@ -203,7 +203,7 @@ int Gestionnaire::calculerNombreBilletsEnSolde()
 }*/
 	
 // TODO
-void Gestionnaire::afficher(ostream& o)
+void Gestionnaire::afficher(ostream& o)const
 {
 	o << "=================== ETAT ACTUEL DU PROGRAMME ==================\n\n";
 

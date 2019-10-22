@@ -8,8 +8,14 @@
 
 1.	Nous remarquons que le classe Solde à une méthode sans implémentation, getPrixBase(). Dans le contexte du polymorphisme, 
     quelle est l’utilité d’avoir une méthode dans une classe parent qui ne possède aucune implémentation?
+	Réponse : Une classe avec une méthode sans implémentation est appelée abstraite, elle sert de classe de base à des
+			classes dérivées ( elle sert à représenter ou regrouper les classes filles sous une seul class) et surtout ne permet pas d'instancier 
+			un objet de type de la classe de base, donc on pourra pas instancier un objet d'une class abstraite, mais on peut le faire pour les 
+			class dérivées. 
 
 2.	Pour quelle raison devons-nous déclarer certains destructeurs virtuels? 
+	Réponse : Pour utiliser le polymorphisme et pour qu'ils puissent détruire même les objets des classes filles, comme par exemple 
+		dans la class  membre, le déstructeur est virtual, ça permet d'appeler le bon déstructeur. 
 
 */
 

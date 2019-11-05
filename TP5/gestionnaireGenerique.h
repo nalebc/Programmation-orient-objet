@@ -11,23 +11,6 @@
 
 using namespace  std;
 
-/*
-    class GestionnaireGenerique
-
-    Méthodes :
-   
-    void ajouter(const T& t);
-    int getNombreElements() const;
- 
-    Attributs :
-    C conteneur_;
-*/
-
-/*              
-	* T   = pair<string, Membre*> ou Coupon*; 
-	* Conteneur   = map<string, Membre*> ou vector<Coupon*>; 
-	* FoncteurAjouter = AjouterMembre ou AjouterCoupon
-*/
 template<typename C, typename T, typename FoncteurAjouter>
 
 class GestionnaireGenerique
@@ -52,12 +35,8 @@ C GestionnaireGenerique<C, T, FoncteurAjouter>::getConteneur() const
  template<typename C, typename T, typename FoncteurAjouter>
   void GestionnaireGenerique<C, T, FoncteurAjouter>::ajouter(const T & t)
  {
-	//  insert(conteneur_.end()--, t
 	 FoncteurAjouter foncteur = FoncteurAjouter(conteneur_);
-	 foncteur(t);
-	  
-	  
-	  
+	 foncteur(t);  
  }
 
   template<typename C, typename T, typename FoncteurAjouter>

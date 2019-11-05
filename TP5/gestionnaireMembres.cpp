@@ -44,7 +44,6 @@ void GestionnaireMembres::assignerBillet(Billet* billet, const string& nomMembre
 
 double GestionnaireMembres::calculerRevenu() const
 {
-	//TODO
 	double revenu = 0;
 	for (auto it : conteneur_) {
 		vector<Billet*> b = it.second->getBillets();
@@ -55,8 +54,6 @@ double GestionnaireMembres::calculerRevenu() const
 
 int GestionnaireMembres::calculerNombreBilletsEnSolde() const
 {
-	
-//TODO
 	int nbBilletsSolde = 0;
 	for (auto it : conteneur_) {
 		vector<Billet*> b = it.second->getBillets();
@@ -67,11 +64,9 @@ int GestionnaireMembres::calculerNombreBilletsEnSolde() const
 
 Billet * GestionnaireMembres::getBilletMin(  string nomMembre) const
 {
-	
 	Membre* membre = conteneur_.at(nomMembre);
 	vector<Billet*> b = membre->getBillets();
-	auto compare = [](Billet* b1, Billet* b2) { return b1->getPrix() < b2->getPrix(); };
-	return *(min_element(b.begin(), b.end(), compare));
+	return *(min_element(b.begin(), b.end(), [](Billet* b1, Billet* b2) { return b1->getPrix() < b2->getPrix(); }));
 	
 }
 
@@ -79,10 +74,7 @@ Billet * GestionnaireMembres::getBilletMax(string nomMembre) const
 {
 	Membre* membre = conteneur_.at(nomMembre);
 	vector<Billet*> b = membre->getBillets();
-	auto compare = [](Billet* b1, Billet* b2) {return b1->getPrix() < b2->getPrix(); };
-	return *(max_element(b.begin(), b.end(), compare));
-
-	
+	return *(max_element(b.begin(), b.end(), [](Billet* b1, Billet* b2) {return b1->getPrix() < b2->getPrix(); }));
 }
 
 
@@ -107,8 +99,4 @@ void GestionnaireMembres::afficher(ostream& o) const
 	for (auto it = conteneur_.begin(); it != conteneur_.end(); it++)
 		it->second->afficher(o);
 
-/*
-	for (size_t i =0 ; i<membres_.size() ; ++i) {
-		membres[i]->afficher(o);
-	}*/
 }

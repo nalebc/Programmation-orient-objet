@@ -47,7 +47,7 @@ double GestionnaireMembres::calculerRevenu() const
 	double revenu = 0;
 	for (auto it : conteneur_) {
 		vector<Billet*> b = it.second->getBillets();
-		for_each(b.begin(), b.end(), [&revenu](Billet* billet) { revenu += billet->getPrix(); });
+		for_each(b.begin(), b.end(), [&revenu](const Billet* billet) { revenu += billet->getPrix(); });
 	}
 	return revenu;
 }
@@ -64,17 +64,14 @@ int GestionnaireMembres::calculerNombreBilletsEnSolde() const
 
 Billet * GestionnaireMembres::getBilletMin(  string nomMembre) const
 {
-	Membre* membre = conteneur_.at(nomMembre);
-	vector<Billet*> b = membre->getBillets();
-	return *(min_element(b.begin(), b.end(), [](Billet* b1, Billet* b2) { return b1->getPrix() < b2->getPrix(); }));
-	
+	vector<Billet*> b = conteneur_.at(nomMembre)->getBillets();
+	return *(min_element(b.begin(), b.end(), [](const Billet* b1,const  Billet* b2) { return b1->getPrix() < b2->getPrix(); }));
 }
 
 Billet * GestionnaireMembres::getBilletMax(string nomMembre) const
 {
-	Membre* membre = conteneur_.at(nomMembre);
-	vector<Billet*> b = membre->getBillets();
-	return *(max_element(b.begin(), b.end(), [](Billet* b1, Billet* b2) {return b1->getPrix() < b2->getPrix(); }));
+	vector<Billet*> b = conteneur_.at(nomMembre)->getBillets();
+	return *(max_element(b.begin(), b.end(), [](const Billet* b1,const Billet* b2) {return b1->getPrix() < b2->getPrix(); }));
 }
 
 
@@ -83,7 +80,7 @@ vector<Billet*> GestionnaireMembres::trouverBilletParIntervallle(Membre * membre
 {
 	vector<Billet*> billetTrouve;
 	vector<Billet*> b = membre->getBillets();
-	copy_if(b.begin(), b.end(), back_inserter(billetTrouve), [prixInf,prixSup](Billet* b) {return IntervallePrixBillet(prixInf, prixSup)(b); });
+	copy_if(b.begin(), b.end(), back_inserter(billetTrouve), [prixInf,prixSup]( Billet* b) {return IntervallePrixBillet(prixInf, prixSup)(b); });
 	return billetTrouve;
 	
 

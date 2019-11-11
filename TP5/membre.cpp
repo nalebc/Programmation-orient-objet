@@ -20,7 +20,7 @@ Membre::Membre(const string& nom) :
 Membre::Membre(const Membre& membre) :
 	nom_(membre.nom_)
 {
-	transform(membre.billets_.begin(), membre.billets_.end(), billets_.begin(), [](Billet*  billet) -> Billet* {  return billet->clone(); });
+	transform(membre.billets_.begin(), membre.billets_.end(), billets_.begin(), [](const Billet*  billet) -> Billet* {  return billet->clone(); });
 }
 //todo
 Membre::~Membre()
@@ -48,7 +48,7 @@ void Membre::setNom(const string& nom)
 vector<Billet*>::iterator Membre::trouverBillet(const string & pnr)
 {
 
-	return find_if(billets_.begin(), billets_.end(), [pnr](Billet* billet) {return pnr == billet->getPnr(); });
+	return find_if(billets_.begin(), billets_.end(), [pnr](const Billet* billet) {return pnr == billet->getPnr(); });
 }
 
 
@@ -111,7 +111,5 @@ void Membre::afficher(ostream& o) const
 	o << "- Membre " << nom_ << ":" << endl;
 	o << "\t" << "- Billets :" << endl;
 	copy(billets_.begin(), billets_.end(), ostream_iterator<Billet*>(o, ""));
-	/*for (size_t i = 0; i < billets_.size(); ++i) {
-		billets_[i]->afficher(o);
-	}*/
+	
 }

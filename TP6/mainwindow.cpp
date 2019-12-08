@@ -141,6 +141,7 @@ void MainWindow::setUI(){
     editeurPourcentageSoldeBillet_ = new QLineEdit();
     editeurPourcentageSoldeBillet_->setValidator(new QDoubleValidator(0, 10000, 2, this));
 
+
     QHBoxLayout* pourcentageSoldeBilletLayout = new QHBoxLayout();
     pourcentageSoldeBilletLayout->addWidget(new QLabel("Pourcentage Solde Billet : "));
     pourcentageSoldeBilletLayout->addWidget(editeurPourcentageSoldeBillet_);
@@ -171,7 +172,8 @@ void MainWindow::setUI(){
     couponsLabel->setText("Coupons : ");
     listeCoupons_ = new QListWidget(this);
     listeCoupons_->setSortingEnabled(true);
-    QObject::connect( listeCoupons_,SIGNAL(itemClicked(QListWidgetItem*)), this,SLOT(selectionnerCoupon(QListWidgetItem*)));
+
+    connect( listeCoupons_,SIGNAL(itemClicked(QListWidgetItem*)), this,SLOT(selectionnerCoupon(QListWidgetItem*)));
 
 
 
@@ -203,7 +205,9 @@ void MainWindow::setUI(){
 
     QHBoxLayout* boutonCoupon = new QHBoxLayout();
     boutonAjouterCoupon =  new QPushButton("Ajouter Coupon");
+    // ajouter le bouton dans le widget
     boutonCoupon->addWidget(boutonAjouterCoupon);
+    // connecter le SLOT ajouterCoupon avec le signal emit lorsqu'on clique sur le bouton
     connect(boutonAjouterCoupon,SIGNAL(clicked()), this, SLOT(ajouterCoupon()));
 
 
@@ -222,6 +226,7 @@ void MainWindow::setUI(){
     choixMembre->addItem("Tout Afficher"); // Index 0
     choixMembre->addItem("Afficher Membres Reguliers"); // Index 1
     choixMembre->addItem("Afficher Membres Premium"); // Index 2
+    // connecter le SLOT filtrerListe avec le signal emit lorsque un choix de type de membre est choisi
     connect(choixMembre,SIGNAL(currentIndexChanged(int)),this, SLOT(filtrerListe(int)));
 // TODO
 
@@ -230,6 +235,7 @@ void MainWindow::setUI(){
     membresLabel->setText("Membres : ");
     listeMembres_ = new QListWidget(this);
     listeMembres_->setSortingEnabled(true);
+    // connecter le SLOT selectionnerMembre avec le signal emit lorsque un membre dans la liste est choisi
     connect(listeMembres_,SIGNAL(itemClicked(QListWidgetItem*)),this, SLOT(selectionnerMembre(QListWidgetItem* )));
 
 
@@ -239,7 +245,9 @@ void MainWindow::setUI(){
     //Champ pour les points du Membres Regulier
     editeurPoints_ = new QLineEdit();
     editeurPoints_->setValidator(new QDoubleValidator(0, 10000, 2, this));
+    // désactiver l'editeurPoints
     editeurPoints_->setDisabled(true);
+    // modifier le text a afficher de editeurPoints
     editeurPoints_->setText("N/a");
 
     QHBoxLayout* pointsMembreLayout = new QHBoxLayout();
@@ -254,7 +262,9 @@ void MainWindow::setUI(){
     QHBoxLayout* pointsCumMembreLayout = new QHBoxLayout();
     pointsCumMembreLayout->addWidget(new QLabel("Points Cumules : "));
     pointsCumMembreLayout->addWidget(editeurPointsCumules_);
+    //désactivation de l'editeurPointsCumules
     editeurPointsCumules_->setDisabled(true);
+    // modifier le text a afficher de editeurPointsCumules
     editeurPointsCumules_->setText("N/a");
 
     //Champ pour les points cumules du Membres Regulier
@@ -399,6 +409,8 @@ void MainWindow::nettoyerVue() {
 }
 
 void MainWindow::nettoyerVueBillets(){
+    // réactivier tous les éditeurs et bouton et  effacer leur contenu
+
     editeurOD_->setDisabled(false);
     editeurOD_->clear();
     boutonAjouterBillet->setDisabled(false);
@@ -422,11 +434,14 @@ void MainWindow::nettoyerVueBillets(){
 
     editeurUtilisationsRestantesFlightPass_->setDisabled(true);
     editeurUtilisationsRestantesFlightPass_->clear();
+
     for_each(boutonsRadioTypeBillets_.begin(),boutonsRadioTypeBillets_.end(),[](QRadioButton* b) {b->setDisabled(false);  });
 
 }
 
 void MainWindow::nettoyerVueCoupons(){
+    // réactivier tous les éditeurs  et  effacer leur contenu
+
     editeurCodeCoupon_->setDisabled(false);
     editeurCodeCoupon_->clear();
 
@@ -435,22 +450,26 @@ void MainWindow::nettoyerVueCoupons(){
 
     editeurRabaisCoupon_->setDisabled(false);
     editeurRabaisCoupon_->clear();
+    boutonAjouterCoupon->setDisabled(false);
+
 
 }
 
 void MainWindow::nettoyerVueMembres(){
+    // afficher un text à chaque fois qu'on nettoie la vue
     editeurPoints_->setText("N/a");
 
     editeurPointsCumules_->setText("N/a");
 
     editeurJoursRestants_->setText("N/a");
-    boutonAjouterCoupon->setDisabled(false);
 
 }
 
 
 void MainWindow::selectionnerBillet(QListWidgetItem* item){
+    // récupérer le billet selectionné
     Billet* billet = item->data(Qt::UserRole).value<Billet*>();
+    // desactiver tous les editeurs et boutons
     boutonAjouterBillet->setDisabled(true);
     editeurPNR_->setDisabled(true);
     editeurOD_->setDisabled(true);
@@ -459,20 +478,21 @@ void MainWindow::selectionnerBillet(QListWidgetItem* item){
     editeurPourcentageSoldeBillet_->setDisabled(true);
     choixTarifBillet_->setDisabled(true);
     choixMembreBillet_->setDisabled(true);
-
+// trouver le tarif du billet puis l'afficher
     int indexTarif = choixTarifBillet_->findText(QString::fromStdString(billet->formatTarif(billet->getTarif())));
     if (indexTarif != -1)
        choixTarifBillet_->setCurrentIndex(indexTarif);
-
+// trouver le membre propriétaire du billet et puis l'afficher
     int indexMembre = choixMembreBillet_->findText(QString::fromStdString(billet->getNomPassager()));
     if(indexMembre != -1)
         choixMembreBillet_->setCurrentIndex(indexMembre);
+    // recuperer les informations du billet et ensuite les afficher
     editeurPNR_->setText(QString::fromStdString( billet->getPnr()));
     editeurOD_->setText(QString::fromStdString(billet->getOd()));
     editeurPrixBillet_->setText(QString::number(billet->getPrix()));
 
 
-
+    // cocher le boutons du type de billet dependamment du type de billet selectionné
     for(auto b : boutonsRadioTypeBillets_){
         b->setDisabled(true);
         if((typeid (*billet) == typeid (BilletRegulier) && b->text().endsWith("Regulier") )||
@@ -483,6 +503,7 @@ void MainWindow::selectionnerBillet(QListWidgetItem* item){
 }
 
     }
+    // pour les if else suivant, afficher les informations du billet dependamment de son type
     if(typeid(*billet) == typeid(BilletRegulier)){
         editeurDateVol_->setText( QString::fromStdString((dynamic_cast<BilletRegulier*>(billet)->getDateVol() )));
         editeurPourcentageSoldeBillet_->setText("N/a")  ;
@@ -492,13 +513,13 @@ void MainWindow::selectionnerBillet(QListWidgetItem* item){
     else if (typeid (*billet) == typeid(BilletRegulierSolde)){
         editeurDateVol_->setText( QString::fromStdString((dynamic_cast<BilletRegulierSolde*>(billet)->getDateVol() )));
         editeurUtilisationsRestantesFlightPass_->setText("N/a")  ;
-        editeurPourcentageSoldeBillet_->setText( QString("%1 %").arg(dynamic_cast<BilletRegulierSolde*>(billet)->getPourcentageSolde()));
-        editeurPrixBillet_->setText(QString::number(dynamic_cast<BilletRegulierSolde*>(billet)->getPrixBase()));
+        editeurPourcentageSoldeBillet_->setText( QString::number(dynamic_cast<BilletRegulierSolde*>(billet)->getPourcentageSolde()));
+        editeurPrixBillet_->setText(QString::number(dynamic_cast<BilletRegulierSolde*>(billet)->getPrix()));
 
        }
     else if (typeid(*billet) == typeid(FlightPassSolde) ){
-        editeurUtilisationsRestantesFlightPass_->setText( QString("%1   ").arg((dynamic_cast<FlightPassSolde*>(billet)->getNbUtilisationsRestante())));
-        editeurPourcentageSoldeBillet_->setText( QString("%1  %").arg((dynamic_cast<FlightPassSolde*>(billet)->getPourcentageSolde())));
+        editeurUtilisationsRestantesFlightPass_->setText( QString::number(dynamic_cast<FlightPassSolde*>(billet)->getNbUtilisationsRestante()));
+        editeurPourcentageSoldeBillet_->setText( QString::number((dynamic_cast<FlightPassSolde*>(billet)->getPourcentageSolde())));
         editeurDateVol_->setText("N/a")   ;
         editeurPrixBillet_->setText(QString::number(dynamic_cast<FlightPassSolde*>(billet)->getPrixBase()));
 
@@ -506,7 +527,7 @@ void MainWindow::selectionnerBillet(QListWidgetItem* item){
     else if (typeid(*billet) == typeid(FlightPass) ){
         editeurDateVol_->setText("N/a")  ;
         editeurPourcentageSoldeBillet_->setText("N/a")  ;
-        editeurUtilisationsRestantesFlightPass_->setText( QString("%1 ").arg((dynamic_cast<FlightPass*>(billet)->getNbUtilisationsRestante())));
+        editeurUtilisationsRestantesFlightPass_->setText( QString::number(dynamic_cast<FlightPass*>(billet)->getNbUtilisationsRestante()));
 }
 
 
@@ -515,6 +536,7 @@ void MainWindow::selectionnerBillet(QListWidgetItem* item){
 }
 void MainWindow::selectionnerCoupon(QListWidgetItem* item ){
     // TODO
+    // recuperer le coupon selectionné et afficher ses informations
     Coupon * c = item->data(Qt::UserRole).value<Coupon*>();
     editeurCodeCoupon_->setDisabled(true);
     editeurCoutCoupon_->setDisabled(true);
@@ -532,6 +554,8 @@ void MainWindow::selectionnerCoupon(QListWidgetItem* item ){
 }
 void MainWindow::selectionnerMembre(QListWidgetItem* item){
     // TODO
+    // recuperer le membre selectionné et afficher ses informations dependamment de son type
+
     Membre * m= item->data(Qt::UserRole).value<Membre*>();
 
 
@@ -558,11 +582,13 @@ void MainWindow::selectionnerMembre(QListWidgetItem* item){
 }
 void MainWindow::ajouterBillet(){
     // TODO
-    Billet* b;
+
    bool condition = true;
+// voir si un type de billet a été selectionné ou pas
    for( QRadioButton* q : boutonsRadioTypeBillets_)
        if ( q->isChecked())
            condition = false;
+   // lancer une exception dependamment de la case laissé vide
     try{
         if(choixMembreBillet_->currentText() == "Membres" )
               throw ExceptionArgumentInvalide ( "Erreur: Le membre n'a pas été choisi");
@@ -583,8 +609,9 @@ void MainWindow::ajouterBillet(){
 
 
 
-
+    Billet* b;
     QRadioButton* selected;
+//recuperer le bouton selectionné et creer un billet dependamment du bouton et appuyé et les informations entrées, en plus on vérifie si aucune case est vide
     for_each(boutonsRadioTypeBillets_.begin(),boutonsRadioTypeBillets_.end(),[&selected](QRadioButton* q) {if(q->isChecked()) selected = q;});
     if(selected->text().endsWith("Regulier")){
         if (editeurDateVol_->text().isEmpty())
@@ -596,8 +623,9 @@ void MainWindow::ajouterBillet(){
        throw ExceptionArgumentInvalide ( "Erreur: La date du billet n'a pas été rempli");
         if(editeurPourcentageSoldeBillet_->text().isEmpty())
                     throw ExceptionArgumentInvalide ( "Erreur: Le pourcentage du billet n'a pas été rempli");
+
         b = new BilletRegulierSolde(editeurPNR_->text().toStdString(),editeurPrixBillet_->text().toDouble(),editeurOD_->text().toStdString(),getTarifBillet(),
-                 editeurDateVol_->text().toStdString(),editeurPourcentageSoldeBillet_->text().toDouble());}
+                 editeurDateVol_->text().toStdString(),editeurPourcentageSoldeBillet_->text().toDouble()/100);}
 
     else if(selected->text().endsWith("FlightPass")){
         b = new FlightPass(editeurPNR_->text().toStdString(),editeurPrixBillet_->text().toDouble(),editeurOD_->text().toStdString(),getTarifBillet());}
@@ -608,18 +636,24 @@ void MainWindow::ajouterBillet(){
         if(editeurPourcentageSoldeBillet_->text().isEmpty())
                     throw ExceptionArgumentInvalide ( "Erreur: Le pourcentage du billet n'a pas été rempli");
         b = new FlightPassSolde(editeurPNR_->text().toStdString(),editeurPrixBillet_->text().toDouble(),editeurOD_->text().toStdString(),getTarifBillet(),
-                                editeurPourcentageSoldeBillet_->text().toDouble());}
+                                editeurPourcentageSoldeBillet_->text().toDouble()/100);}
 
-}
-   catch(ExceptionArgumentInvalide& e){
-       afficherMessage( e.what());
-       return;
-
-   }
     trouverMembreParNom( choixMembreBillet_->currentText().toStdString())->ajouterBillet(b);
+    // on ajoute le billet dans la liste des billets pour pouvoir l'afficher
     QListWidgetItem* item = new QListWidgetItem(QString::fromStdString(b->getPnr()) , listeBillets_);
     item->setData(Qt::UserRole, QVariant::fromValue<Billet*>(b));
     item->setHidden(false);
+
+
+
+}
+   // on catch les exception et on affiche un message d'erreur
+   catch(ExceptionArgumentInvalide& e){
+       afficherMessage( e.what());
+
+   }
+    // on ajoute le billet au membre correspondant
+
 
 
 
@@ -628,25 +662,27 @@ void MainWindow::ajouterBillet(){
 
 }
 void MainWindow::ajouterCoupon(){
+    // lancer une exception dependamment de la case laissé vide
         try { if(editeurCodeCoupon_->text().isEmpty() )
             throw ExceptionArgumentInvalide ( "Erreur: Le code n'a pas été rempli");
       else if (editeurCoutCoupon_->text().isEmpty())
           throw ExceptionArgumentInvalide ( "Erreur: Le cout n'a pas été rempli");
       else if(editeurRabaisCoupon_->text().isEmpty())
           throw ExceptionArgumentInvalide ( "Erreur: Le rabais n'a pas été rempli");
+        // créer un coupon dependamment des informations entrées et l'ajouter à la liste de coupons affin de l'afficher
+        Coupon* coupon = new Coupon(editeurCodeCoupon_->text().toStdString(),editeurRabaisCoupon_->text().toDouble()/100,editeurCoutCoupon_->text().toInt());
+        coupons_.push_back(coupon);
+        QListWidgetItem* item = new QListWidgetItem(QString::fromStdString(  coupon->getCode() ) , listeCoupons_);
+        item->setData(Qt::UserRole, QVariant::fromValue<Coupon*>(coupon));
+        item->setHidden(false);
+
 }
+    // on catch les exceptions et on affiche un message d'erreur
 catch(ExceptionArgumentInvalide & e){
     afficherMessage(e.what());
-    return;
 
     // TODO
 }
-
-    Coupon* coupon = new Coupon(editeurCodeCoupon_->text().toStdString(),editeurRabaisCoupon_->text().toDouble(),editeurCoutCoupon_->text().toInt());
-    coupons_.push_back(coupon);
-    QListWidgetItem* item = new QListWidgetItem(QString::fromStdString(  coupon->getCode() ) , listeCoupons_);
-    item->setData(Qt::UserRole, QVariant::fromValue<Coupon*>(coupon));
-    item->setHidden(false);
 
 
 }
@@ -662,7 +698,7 @@ void MainWindow::filtrerListe(int index){
 
 
 }
-
+// retourner un bool pour savoir le type du membre souhaité
 bool MainWindow::filtrerMasque(Membre* membre, int index) {
     switch (index){
     case 0 : return (typeid (*membre) == typeid(Membre));
@@ -674,7 +710,7 @@ bool MainWindow::filtrerMasque(Membre* membre, int index) {
 
 
 }
-
+// retourner le tarif d'un billet
 TarifBillet MainWindow::getTarifBillet(){
 //TODO
     if ( choixTarifBillet_->currentText() == "Premiere")
@@ -692,7 +728,7 @@ TarifBillet MainWindow::getTarifBillet(){
 
 
 
-
+// retourner un membre  en le trouvant par son nom
 Membre* MainWindow::trouverMembreParNom(const string& nom){
    //TODO
    return *find_if(membres_.begin(),membres_.end(), [&nom](Membre* m){ return m->getNom() == nom;});

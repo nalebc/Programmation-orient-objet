@@ -102,9 +102,7 @@ private:
     void ajouterMembresDansComboBox(QComboBox* list);
     Membre* trouverMembreParNom(const string& nom);
 
-signals:
-   // void selectionBillet(QListWidgetItem* item);
-    //void selectionCoupon(QListWidgetItem* item);
+
 
 };
 #endif // MAINWINDOW_H
